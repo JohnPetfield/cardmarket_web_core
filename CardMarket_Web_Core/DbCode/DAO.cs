@@ -12,8 +12,13 @@ namespace CardMarket_Web_Core.DbCode
          * https://www.codeproject.com/Questions/1085601/How-to-fix-invalid-object-name
          * **/
 
-        string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CardMarketDB;Integrated Security=True;Connect Timeout=30;" +
+        /*
+        readonly string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CardMarketDB;Integrated Security=True;Connect Timeout=30;" +
                                     "Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+        */
+
+        readonly string connectionString = "server=127.0.0.1;port=3306;database=cardmarketdb;user id=;password=Chicken123£\"!";
+        //readonly string connectionString = "server=127.0.0.1;database=cardmarketdb;user id=pi;password=Chicken123£\"!";
 
         public void AddProduct(ProductObj productobj)
         {

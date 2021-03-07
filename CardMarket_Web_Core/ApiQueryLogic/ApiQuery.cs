@@ -58,11 +58,21 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                     /** Find all Products for each cardName */
 
                     //DAO dao = new DAO();
+                    
+                    
+                    DAO2 dao2 = new DAO2();
+
+
+                    //dao2.HasProductInfo(cardName, out returnProductObj);
+
+
+
+                    //ProductObj returnProductObj;
 
                     ProductObj returnProductObj = new ProductObj();
 
-                    //bool haveProductInfo = dao.HasProductInfo(cardName, out returnProductObj);
-                    bool haveProductInfo = false;
+                    bool haveProductInfo = dao2.HasProductInfo(cardName, out returnProductObj);
+                    //bool haveProductInfo = false;
 
                     String url = "https://api.cardmarket.com/ws/v2.0/output.json/products/find?search="
                                + cardName + "&exact=true&idGame=1&idLanguage=1";
