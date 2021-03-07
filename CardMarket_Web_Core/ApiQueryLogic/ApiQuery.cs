@@ -21,6 +21,8 @@ namespace CardMarket_Web_Core.ApiQueryLogic
 
             public List<Order> RunQuery()
             {
+                Console.WriteLine("ApiQuery - started");
+
                 #region runQuery
                 /*Prevents "Unhandled Exception: System.Net.WebException: 
                   The request was aborted: Could not create SSL/TLS secure channel." error*/
@@ -28,13 +30,11 @@ namespace CardMarket_Web_Core.ApiQueryLogic
 
                 RequestHelper myRequest = new RequestHelper();
 
-                Console.WriteLine("======");
                 Console.WriteLine("Single Country only? " + inputObj.singleCountryOnly);
                 if (inputObj.singleCountryOnly)
                 {
                     Console.WriteLine("Country Code:- " + inputObj.countryCode);
                 }
-                Console.WriteLine("======");
 
                 /// https://stackoverflow.com/questions/31813055/how-to-handle-null-empty-values-in-jsonconvert-deserializeobject
                 var settings = new JsonSerializerSettings
@@ -56,23 +56,12 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                 {
                     #region wantedCards
                     /** Find all Products for each cardName */
-
-                    //DAO dao = new DAO();
                     
-                    
-                    DAO2 dao2 = new DAO2();
-
-
-                    //dao2.HasProductInfo(cardName, out returnProductObj);
-
-
-
-                    //ProductObj returnProductObj;
+                    DAO dao = new DAO();
 
                     ProductObj returnProductObj = new ProductObj();
 
-                    bool haveProductInfo = dao2.HasProductInfo(cardName, out returnProductObj);
-                    //bool haveProductInfo = false;
+                    bool haveProductInfo = dao.HasProductInfo(cardName, out returnProductObj);
 
                     String url = "https://api.cardmarket.com/ws/v2.0/output.json/products/find?search="
                                + cardName + "&exact=true&idGame=1&idLanguage=1";
@@ -86,7 +75,7 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                             returnProductObj.product.Count() > 0)
                         {
                             // save to DB
-                            //dao.AddProduct(returnProductObj);
+                            dao.AddProduct(returnProductObj);
                         }
                     }
                     else
@@ -219,6 +208,7 @@ namespace CardMarket_Web_Core.ApiQueryLogic
 
                 potentialOrders = MyListOps.OrderByPrice(potentialOrders);
 
+                /*
                 if (potentialOrders.Count != 0)
                 {
                     // Display the final results i.e. the sorted Orders
@@ -243,7 +233,10 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                     Console.WriteLine("No Sellers found for all cards required");
                     Console.WriteLine("=====");
                 }
+                */
 
+                Console.WriteLine("No records returned: " + potentialOrders.Count());
+                Console.WriteLine("ApiQuery - completed");
                 return potentialOrders;
 
                 #endregion

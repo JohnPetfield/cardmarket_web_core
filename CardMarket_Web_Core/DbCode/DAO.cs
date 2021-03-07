@@ -1,44 +1,48 @@
 ﻿using CardMarket_Web_Core.ApiQueryLogic;
+
 using System;
-using System.Data.SqlClient;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using MySql.Data.MySqlClient;
 
 namespace CardMarket_Web_Core.DbCode
 {
-    class DAO
+    public class DAO
     {
-        /** 
-         * connection string in properties of DB puts 'Initial Catalog' as 'Master'
-         * my Database is called 'CardMarketDB' to I changed Master to this CardMarketDB
-         * https://www.codeproject.com/Questions/1085601/How-to-fix-invalid-object-name
-         * **/
-
-        /*
-        readonly string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CardMarketDB;Integrated Security=True;Connect Timeout=30;" +
-                                    "Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-        */
-
-        readonly string connectionString = "server=127.0.0.1;port=3306;database=cardmarketdb;user id=;password=Chicken123£\"!";
-        //readonly string connectionString = "server=127.0.0.1;database=cardmarketdb;user id=pi;password=Chicken123£\"!";
+        MySqlConnection conn;
+        private string myConnectionString = "server=127.0.0.1;uid=root;" +
+                                            "pwd=Chicken123;database=cardmarketdb";
 
         public void AddProduct(ProductObj productobj)
         {
-            string sqlStatement = "insert into dbo.Product (cardname, productid, metaproductid,expansionname) " +
+            string sqlStatement = "insert into Product (cardname, productid, metaproductid, expansionname) " +
                 "values(@cardname, @productid, @metaproductid,@expansionname)";
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (MySqlConnection connection = new MySqlConnection(myConnectionString))
             {
                 connection.Open();
                 foreach (Product p in productobj.product)
                 {
-                    SqlCommand command = new SqlCommand(sqlStatement, connection);
+                    MySqlCommand command = new MySqlCommand(sqlStatement, connection);
+
+                    command.Parameters.AddWithValue("@cardname", p.enName);
+                    command.Parameters.AddWithValue("@productid", p.idProduct);
+                    command.Parameters.AddWithValue("@metaproductid", p.idMetaproduct);
+                    command.Parameters.AddWithValue("@expansionname", p.expansionName);
+
+                    /*
                     command.Parameters.Add("@cardname", System.Data.SqlDbType.VarChar, 40).Value = p.enName;
                     command.Parameters.Add("@productid", System.Data.SqlDbType.Int, 40).Value = p.idProduct;
                     command.Parameters.Add("@metaproductid", System.Data.SqlDbType.Int, 40).Value = p.idMetaproduct;
                     command.Parameters.Add("@expansionname", System.Data.SqlDbType.VarChar, 40).Value = p.expansionName;
+                    */
 
                     try
                     {
                         command.ExecuteNonQuery();
+                        Console.WriteLine("try addproduct ");
                     }
                     catch (Exception e)
                     {
@@ -50,55 +54,53 @@ namespace CardMarket_Web_Core.DbCode
 
         public bool HasProductInfo(string cardName, out ProductObj retProducObj)
         {
-            string sqlStatement = "select * from dbo.Product where cardname = @cardname";
+            //Console.WriteLine("HasProductInfo: " + cardName);
+
+            string sqlStatement = "select * from Product where cardname = @cardname";
             retProducObj = new ProductObj();
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (conn = new MySqlConnection(myConnectionString))
             {
-                SqlCommand command = new SqlCommand(sqlStatement, connection);
-
-                command.Parameters.Add("@cardname", System.Data.SqlDbType.VarChar, 40).Value = cardName;
 
                 try
                 {
-                    connection.Open();
-                    SqlDataReader reader = command.ExecuteReader();
+                    conn.Open();
+                    //Console.WriteLine($"MySQL version : {conn.ServerVersion}");
 
-                    if (!reader.HasRows)
-                        return false;
+                    MySqlCommand myCommand = new MySqlCommand(sqlStatement, conn);
 
-                    while (reader.Read())
+                    myCommand.Parameters.AddWithValue("@cardname",cardName);
+
+                    MySqlDataReader myReader;
+
+                    myReader = myCommand.ExecuteReader();
+
+                    while (myReader.Read())
                     {
-                        try
-                        {
-                            Product p = new Product()
-                            {
-                                enName = reader["cardname"].ToString().Trim(),
-                                idProduct = (int)reader["productid"],
-                                idMetaproduct = (int)reader["metaproductid"],
-                                expansionName = reader["expansionname"].ToString().Trim()
-                            };
+                        //Console.WriteLine(myReader["cardname"]);
 
-                            retProducObj.product.Add(p);
-                        }
-                        catch (Exception e)
+                        Product p = new Product()
                         {
-                            Console.WriteLine(e);
-                        }
+                            enName        = myReader["cardname"].ToString().Trim(),
+                            idProduct     = (int)myReader["productid"],
+                            idMetaproduct = (int)myReader["metaproductid"],
+                            expansionName = myReader["expansionname"].ToString().Trim()
+                        };
+
+                        retProducObj.product.Add(p);
                     }
 
-                    if (reader.HasRows)
-                    {
-                        return true;
-                    }
+                    if (retProducObj != null && retProducObj.product.Count > 0)
+                    return true;
                     else return false;
+
                 }
-                catch (Exception e)
+                catch (MySql.Data.MySqlClient.MySqlException ex)
                 {
-                    Console.WriteLine(e.Message);
+                    Console.WriteLine(ex.Message);
                     retProducObj = null;
                     return false;
-                }
+                }            
             }
         }
     }
