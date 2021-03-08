@@ -19,8 +19,10 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                 inputObj = _inputObj;
             }
 
-            public List<Order> RunQuery()
+            public List<Order> RunQuery(string _connectionString)
             {
+                string connectionString = _connectionString;
+
                 Console.WriteLine("ApiQuery - started");
 
                 #region runQuery
@@ -57,7 +59,7 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                     #region wantedCards
                     /** Find all Products for each cardName */
                     
-                    DAO dao = new DAO();
+                    DAO dao = new DAO(connectionString);
 
                     ProductObj returnProductObj = new ProductObj();
 
@@ -69,7 +71,9 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                     if (!haveProductInfo)
                     {
                         Console.WriteLine("Product Info for card: [[{0}]] not held on DB.", cardName);
+                        Console.WriteLine("Product API call - started");
                         returnProductObj = JsonConvert.DeserializeObject<ProductObj>(myRequest.MakeRequest(url), settings);
+                        Console.WriteLine("Product API call - ended");
 
                         if (returnProductObj != null &&
                             returnProductObj.product.Count() > 0)

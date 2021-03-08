@@ -1,5 +1,6 @@
 ﻿using CardMarket_Web_Core.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,14 @@ namespace CardMarket_Web_Core.Controllers
 {
     public class CardMarketController : Controller
     {
+
+        IConfiguration config;
+
+        public CardMarketController(IConfiguration _config)
+        {
+            config = _config;
+        }
+
         public IActionResult Index()
         {
             // returns CardMarketView.cshtml
@@ -34,12 +43,13 @@ namespace CardMarket_Web_Core.Controllers
         public ActionResult ViewOrders(Input input)
         {
             input.PrepareInput();
+            string s = config.GetConnectionString("DefaultConnection");
 
             APIQuery query = new APIQuery(input);
 
             ApiQueryModel apiQueryModel = new ApiQueryModel
             {
-                orders = query.RunQuery()
+                orders = query.RunQuery(s)
             };
 
 

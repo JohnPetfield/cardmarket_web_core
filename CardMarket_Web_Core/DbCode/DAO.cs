@@ -6,14 +6,19 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using MySql.Data.MySqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace CardMarket_Web_Core.DbCode
 {
     public class DAO
     {
+        private string myConnectionString;
         MySqlConnection conn;
-        private string myConnectionString = "server=127.0.0.1;uid=root;" +
-                                            "pwd=Chicken123;database=cardmarketdb";
+
+        public DAO(string _s)
+        {
+            myConnectionString = _s;
+        }
 
         public void AddProduct(ProductObj productobj)
         {
@@ -55,6 +60,7 @@ namespace CardMarket_Web_Core.DbCode
         public bool HasProductInfo(string cardName, out ProductObj retProducObj)
         {
             //Console.WriteLine("HasProductInfo: " + cardName);
+            //Console.WriteLine(config.GetConnectionString("DefaultConnection"));
 
             string sqlStatement = "select * from Product where cardname = @cardname";
             retProducObj = new ProductObj();
