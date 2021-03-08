@@ -174,11 +174,18 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                 // An 'order' is a list of each card with the lowest priced article with total cost from a seller
                 List<Order> potentialOrders = new List<Order>();
 
+                int resultsLimit = 20;
+                int resultCnt = 0;
+
                 foreach (var v in res)
                 {
                     Order order = new Order();
                     order.user = v;
 
+                    if (resultCnt >= resultsLimit)
+                    {
+                        break;
+                    }
                     string lastCardName = "";
                     bool lMatchingCountry = false;
                     foreach (Article a in compareResults)
@@ -201,9 +208,15 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                         }
                     }
                     if (inputObj.singleCountryOnly && lMatchingCountry)
+                    {
                         potentialOrders.Add(order);
+                        resultCnt++;
+                    }
                     else if (!inputObj.singleCountryOnly)
+                    {
                         potentialOrders.Add(order);
+                        resultCnt++;
+                    }
                 }
 
                 potentialOrders = MyListOps.OrderByPrice(potentialOrders);
@@ -235,7 +248,11 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                 }
                 */
 
-                Console.WriteLine("No records returned: " + potentialOrders.Count());
+                if (resultCnt >= resultsLimit)
+                {
+                    Console.WriteLine("No of results limited to: " + resultsLimit);
+                }
+                Console.WriteLine("No. records returned: " + potentialOrders.Count());
                 Console.WriteLine("ApiQuery - completed");
                 return potentialOrders;
 

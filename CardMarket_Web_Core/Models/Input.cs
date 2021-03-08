@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,6 +14,7 @@ namespace CardMarket_Web_Core.Models
         /* This is whats input in the form, which is then assigned
          * to the variable cardNamesList*/
 
+        [Required]
         [DisplayName("Card Names:")]
         public string cardNamesString { get; set; }
 
