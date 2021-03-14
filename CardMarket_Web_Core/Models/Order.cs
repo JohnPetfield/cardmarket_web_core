@@ -47,7 +47,7 @@ namespace CardMarket_Web_Core.Models
         public string comments { get; set; }
 
         //[DataType(DataType.Currency)]
-        [DisplayFormat(DataFormatString = "{0:n} €")]
+        [DisplayFormat(DataFormatString = "{0:n2} €")]
         [DisplayName("Price:")]
         public float price { get; set; }
 

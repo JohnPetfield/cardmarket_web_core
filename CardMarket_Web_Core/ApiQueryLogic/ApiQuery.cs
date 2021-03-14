@@ -109,7 +109,7 @@ namespace CardMarket_Web_Core.ApiQueryLogic
 
                             ArticleObj returnArticleObj = JsonConvert.DeserializeObject<ArticleObj>(myRequest.MakeRequest(url), settings);
 
-                            Console.WriteLine("Article API - completed");
+                            Console.WriteLine("Article API call - completed");
 
                             if (returnArticleObj != null)
                             {

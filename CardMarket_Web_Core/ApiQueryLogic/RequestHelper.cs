@@ -31,12 +31,12 @@ namespace CardMarket_Web_Core.ApiQueryLogic
             request.Headers.Add(HttpRequestHeader.Authorization, header.getAuthorizationHeader(method, url));
             request.Method = method;
 
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            try
             {
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                {
                 //Console.WriteLine("response.Headers: " + response.Headers);
 
-                try
-                {
                     using (Stream stream = response.GetResponseStream())
                     {
                         StreamReader reader = new StreamReader(stream, Encoding.UTF8);
@@ -54,11 +54,11 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                         return responseString;
                     }
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                    return "";
-                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return "";
             }
         }
     }
