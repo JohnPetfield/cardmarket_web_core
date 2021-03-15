@@ -1,4 +1,5 @@
-﻿using CardMarket_Web_Core.Models;
+﻿using CardMarket_Web_Core.Exceptions;
+using CardMarket_Web_Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -42,16 +43,35 @@ namespace CardMarket_Web_Core.Controllers
 
         public ActionResult ViewOrders(Input input)
         {
-            input.PrepareInput();
-            string s = config.GetConnectionString("DefaultConnection");
-
-            APIQuery query = new APIQuery(input);
-
-            ApiQueryModel apiQueryModel = new ApiQueryModel
+            try
             {
-                orders = query.RunQuery(s)
-            };
+                input.PrepareInput();
+                string s = config.GetConnectionString("DefaultConnection");
 
+                APIQuery query = new APIQuery(input);
+
+                ApiQueryModel apiQueryModel = new ApiQueryModel();
+
+                apiQueryModel.orders = query.RunQuery(s);
+                
+                return View("ViewOrders", apiQueryModel);
+            }
+
+            catch (CardNotFoundException cnfe)
+            {
+                Console.WriteLine("caught CardNotFoundException - cardmarket conroller");
+                ViewBag.ErrorTitle = "Card Name";
+                ViewBag.ErrorMessage = cnfe.Message;
+                return View("Error");
+            }
+            
+            catch(Exception e)
+            {
+                Console.WriteLine("caught general exception - cardmarket conroller");
+                Console.WriteLine(e);
+                return View("Error");
+            }
+            
 
 
             /*
@@ -75,7 +95,6 @@ namespace CardMarket_Web_Core.Controllers
             };
             */
 
-            return View("ViewOrders", apiQueryModel);
             //return View();
         }
     }

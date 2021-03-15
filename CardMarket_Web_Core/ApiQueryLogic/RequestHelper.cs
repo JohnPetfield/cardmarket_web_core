@@ -31,35 +31,39 @@ namespace CardMarket_Web_Core.ApiQueryLogic
             request.Headers.Add(HttpRequestHeader.Authorization, header.getAuthorizationHeader(method, url));
             request.Method = method;
 
+            /*
             try
             {
-                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            */
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+            //Console.WriteLine("response.Headers: " + response.Headers);
+
+                using (Stream stream = response.GetResponseStream())
                 {
-                //Console.WriteLine("response.Headers: " + response.Headers);
+                    StreamReader reader = new StreamReader(stream, Encoding.UTF8);
+                    String responseString = reader.ReadToEnd();
 
-                    using (Stream stream = response.GetResponseStream())
-                    {
-                        StreamReader reader = new StreamReader(stream, Encoding.UTF8);
-                        String responseString = reader.ReadToEnd();
+                    //Console.WriteLine("response.StatusCode: " + response.StatusCode);
+                    //Console.WriteLine(responseString);
 
-                        //Console.WriteLine("response.StatusCode: " + response.StatusCode);
-                        //Console.WriteLine(responseString);
+                    // again don't know if these do anything to
+                    // help with the timeout issue
 
-                        // again don't know if these do anything to
-                        // help with the timeout issue
+                    response.Close();
+                    response.Dispose();
 
-                        response.Close();
-                        response.Dispose();
-
-                        return responseString;
-                    }
+                    return responseString;
                 }
+            }
+            /*
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return "";
-            }
+            }*/
+
         }
     }
 }

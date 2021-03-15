@@ -43,16 +43,19 @@ namespace CardMarket_Web_Core.DbCode
                     command.Parameters.Add("@metaproductid", System.Data.SqlDbType.Int, 40).Value = p.idMetaproduct;
                     command.Parameters.Add("@expansionname", System.Data.SqlDbType.VarChar, 40).Value = p.expansionName;
                     */
-
+                    /*
                     try
                     {
-                        command.ExecuteNonQuery();
-                        Console.WriteLine("try addproduct ");
+                     */
+                    command.ExecuteNonQuery();
+                    Console.WriteLine("try addproduct ");
+                    /*
                     }
                     catch (Exception e)
                     {
                         Console.WriteLine(e.Message);
                     }
+                    */
                 }
             }
         }
@@ -67,46 +70,47 @@ namespace CardMarket_Web_Core.DbCode
 
             using (conn = new MySqlConnection(myConnectionString))
             {
-
+                /*
                 try
                 {
-                    conn.Open();
-                    //Console.WriteLine($"MySQL version : {conn.ServerVersion}");
+                    */
+                conn.Open();
+                //Console.WriteLine($"MySQL version : {conn.ServerVersion}");
 
-                    MySqlCommand myCommand = new MySqlCommand(sqlStatement, conn);
+                MySqlCommand myCommand = new MySqlCommand(sqlStatement, conn);
 
-                    myCommand.Parameters.AddWithValue("@cardname",cardName);
+                myCommand.Parameters.AddWithValue("@cardname", cardName);
 
-                    MySqlDataReader myReader;
+                MySqlDataReader myReader;
 
-                    myReader = myCommand.ExecuteReader();
+                myReader = myCommand.ExecuteReader();
 
-                    while (myReader.Read())
+                while (myReader.Read())
+                {
+                    //Console.WriteLine(myReader["cardname"]);
+
+                    Product p = new Product()
                     {
-                        //Console.WriteLine(myReader["cardname"]);
+                        enName = myReader["cardname"].ToString().Trim(),
+                        idProduct = (int)myReader["productid"],
+                        idMetaproduct = (int)myReader["metaproductid"],
+                        expansionName = myReader["expansionname"].ToString().Trim()
+                    };
 
-                        Product p = new Product()
-                        {
-                            enName        = myReader["cardname"].ToString().Trim(),
-                            idProduct     = (int)myReader["productid"],
-                            idMetaproduct = (int)myReader["metaproductid"],
-                            expansionName = myReader["expansionname"].ToString().Trim()
-                        };
+                    retProducObj.product.Add(p);
+                }
 
-                        retProducObj.product.Add(p);
-                    }
-
-                    if (retProducObj != null && retProducObj.product.Count > 0)
+                if (retProducObj != null && retProducObj.product.Count > 0)
                     return true;
-                    else return false;
-
+                else return false;
+                /*
                 }
                 catch (MySql.Data.MySqlClient.MySqlException ex)
                 {
                     Console.WriteLine(ex.Message);
                     retProducObj = null;
                     return false;
-                }            
+                }  */
             }
         }
     }

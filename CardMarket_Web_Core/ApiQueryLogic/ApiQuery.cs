@@ -1,4 +1,5 @@
 ﻿using CardMarket_Web_Core.DbCode;
+using CardMarket_Web_Core.Exceptions;
 using CardMarket_Web_Core.Models;
 using Newtonsoft.Json;
 using System;
@@ -141,12 +142,21 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                     }
                     else
                     {
+                        Console.WriteLine("throw custom cardnotfound exception");
+                        throw new CardNotFoundException();
+                        //throw new CardNotFoundException("Incorrect card name");
+                        //throw new MissingMethodException();
+                    }
+                    
+                    /*{
                         Console.WriteLine("---");
                         Console.WriteLine("Product object null");
                         Console.WriteLine("---");
                         Console.WriteLine("Is card name correct? " + cardName);
                         Console.WriteLine("using exact match so need \"//\" if modal or split card etc");
-                    }
+                        
+                        
+                    }*/
 
                     // Sort each list of Articles in username order
                     cumulativeArticleList.Sort((x, y) => x.seller.username.CompareTo(y.seller.username));
