@@ -14,15 +14,18 @@ namespace CardMarket_Web_Core.ApiQueryLogic
     {
         public class APIQuery
         {
-            Input inputObj;
+            private IDAO iDao;
+            private Input inputObj;
+
             public APIQuery(Input _inputObj)
             {
                 inputObj = _inputObj;
             }
 
-            public List<Order> RunQuery(string _connectionString)
+            public List<Order> RunQuery(IDAO _dao)
             {
-                string connectionString = _connectionString;
+                iDao = _dao;
+                //string connectionString = _connectionString;
 
                 Console.WriteLine("ApiQuery - started");
 
@@ -60,11 +63,9 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                     #region wantedCards
                     /** Find all Products for each cardName */
                     
-                    DAO dao = new DAO(connectionString);
-
                     ProductObj returnProductObj = new ProductObj();
 
-                    bool haveProductInfo = dao.HasProductInfo(cardName, out returnProductObj);
+                    bool haveProductInfo = iDao.HasProductInfo(cardName, out returnProductObj);
 
                     String url = "https://api.cardmarket.com/ws/v2.0/output.json/products/find?search="
                                + cardName + "&exact=true&idGame=1&idLanguage=1";
@@ -80,7 +81,7 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                             returnProductObj.product.Count() > 0)
                         {
                             // save to DB
-                            dao.AddProduct(returnProductObj);
+                            iDao.AddProduct(returnProductObj);
                         }
                     }
                     else
