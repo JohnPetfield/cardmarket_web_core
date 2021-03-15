@@ -10,12 +10,12 @@ using Microsoft.Extensions.Configuration;
 
 namespace CardMarket_Web_Core.DbCode
 {
-    public class DAO
+    public class DAOMySQL : IDAO
     {
         private string myConnectionString;
         MySqlConnection conn;
 
-        public DAO(string _s)
+        public DAOMySQL(string _s)
         {
             myConnectionString = _s;
         }

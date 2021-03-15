@@ -1,4 +1,5 @@
-﻿using CardMarket_Web_Core.Exceptions;
+﻿using CardMarket_Web_Core.DbCode;
+using CardMarket_Web_Core.Exceptions;
 using CardMarket_Web_Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -14,10 +15,22 @@ namespace CardMarket_Web_Core.Controllers
     {
 
         IConfiguration config;
+        IDAO iDAO;
 
         public CardMarketController(IConfiguration _config)
         {
             config = _config;
+            string env = config["ENV"];
+            string connectionString =  config.GetConnectionString("DefaultConnection");
+
+            if (env == "Pi")
+            {
+                iDAO = new DAOMySQL(connectionString); 
+            }
+            else
+            {
+                iDAO = new DAOSQL(connectionString); 
+            }
         }
 
         public IActionResult Index()
@@ -46,13 +59,13 @@ namespace CardMarket_Web_Core.Controllers
             try
             {
                 input.PrepareInput();
-                string s = config.GetConnectionString("DefaultConnection");
+                //string s = config.GetConnectionString("DefaultConnection");
 
                 APIQuery query = new APIQuery(input);
 
                 ApiQueryModel apiQueryModel = new ApiQueryModel();
 
-                apiQueryModel.orders = query.RunQuery(s);
+                apiQueryModel.orders = query.RunQuery(iDAO);
                 
                 return View("ViewOrders", apiQueryModel);
             }
