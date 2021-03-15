@@ -19,10 +19,6 @@ namespace CardMarket_Web_Core.DbCode
              * https://www.codeproject.com/Questions/1085601/How-to-fix-invalid-object-name
              * **/
 
-            /*
-            readonly string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CardMarketDB;Integrated Security=True;Connect Timeout=30;" +
-                                        "Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
-            */
         public void AddProduct(ProductObj productobj)
         {
             string sqlStatement = "insert into dbo.Product (cardname, productid, metaproductid,expansionname) " +
