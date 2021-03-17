@@ -9,9 +9,6 @@ namespace CardMarket_Web_Core.ApiQueryLogic
         static public Dictionary<string, string> ReadTokens()
         {
             Dictionary<string, string> tokens = new Dictionary<string, string>();
-            try
-            {
-                Console.WriteLine("top of tokens.cs");
 
                 string workingDirectory = Environment.CurrentDirectory;
                 //Console.WriteLine(workingDirectory);
@@ -49,8 +46,6 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                                     Path.DirectorySeparatorChar +
                                     "Tokens.txt";
 
-                try
-                {
                     string[] lines = File.ReadAllLines(workingDirectory + tokensPath);
 
                     foreach (string s in lines)
@@ -58,16 +53,7 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                         string[] a = s.Split('=');
                         tokens.Add(a[0], a[1]);
                     }
-                }
-                catch 
-                {
-                    Console.WriteLine("failed to read Tokens.txt");
-                    /*
-                    Console.WriteLine(workingDirectory);
-                    Console.WriteLine(projectDirectory);
-                    Console.WriteLine(projectDirectory2);
-                    Console.WriteLine(projectDirectory3);*/
-                }
+
                 /*
                 Console.WriteLine(tokens["appToken"]);
                 Console.WriteLine(tokens["appSecret"]);
@@ -76,13 +62,6 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                 */
 
                 return tokens;
-            }
-            catch (IOException e)
-            {
-                Console.WriteLine("The file could not be read:");
-                Console.WriteLine(e.Message);
-                return tokens;
-            }
         }
     }
 }

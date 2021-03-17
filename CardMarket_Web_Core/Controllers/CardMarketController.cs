@@ -1,4 +1,5 @@
-﻿using CardMarket_Web_Core.DbCode;
+﻿using CardMarket_Web_Core.ApiQueryLogic;
+using CardMarket_Web_Core.DbCode;
 using CardMarket_Web_Core.Exceptions;
 using CardMarket_Web_Core.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -7,13 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static CardMarket_Web_Core.ApiQueryLogic.ApiQuery;
+using static CardMarket_Web_Core.ApiQueryLogic.APIQuery;
 
 namespace CardMarket_Web_Core.Controllers
 {
     public class CardMarketController : Controller
     {
-
         IConfiguration config;
         IDAO iDAO;
 
@@ -35,7 +35,6 @@ namespace CardMarket_Web_Core.Controllers
 
         public IActionResult Index()
         {
-            // returns CardMarketView.cshtml
             return View();
         }
 
@@ -44,14 +43,10 @@ namespace CardMarket_Web_Core.Controllers
 
             Input input = new Input
             {
-                //input.countryCode = "GB";
                 cardNamesString = "Shadowborn Apostle"
-                //cardNamesString = "Shadowborn Apostle\r\nArcane Signet"
             };
 
             return View("ApiQuery", input);
-
-            //return View();
         }
 
         public ActionResult ViewOrders(Input input)
@@ -59,56 +54,42 @@ namespace CardMarket_Web_Core.Controllers
             try
             {
                 input.PrepareInput();
-                //string s = config.GetConnectionString("DefaultConnection");
 
                 APIQuery query = new APIQuery(input);
 
-                ApiQueryModel apiQueryModel = new ApiQueryModel();
+                ApiQueryModel apiQueryModel = new ApiQueryModel
+                {
+                    orders = query.RunQuery(iDAO)
+                };
 
-                apiQueryModel.orders = query.RunQuery(iDAO);
-                
                 return View("ViewOrders", apiQueryModel);
             }
-
-            catch (CardNotFoundException cnfe)
+            catch (AggregateException ae)
             {
-                Console.WriteLine("caught CardNotFoundException - cardmarket conroller");
-                ViewBag.ErrorTitle = "Card Name";
-                ViewBag.ErrorMessage = cnfe.Message;
+                //var ignoredExceptions = new List<Exception>();
+
+                // This is where you can choose which exceptions to handle.
+                foreach (var ex in ae.Flatten().InnerExceptions)
+                {
+                    if (ex is CardNotFoundException)
+                    {
+                        Console.WriteLine("caught CardNotFoundException - cardmarket conroller");
+                        Console.WriteLine(ex.Message);
+                        ViewBag.ErrorTitle = "Card Name";
+                        ViewBag.ErrorMessage = ex.Message;
+                        return View("Error");
+                    }
+                    else
+                    {
+                        Console.WriteLine("caught general exception - cardmarket conroller");
+                        Console.WriteLine("exception message " + ex.Message);
+                        return View("Error");
+                    }
+
+                        //ignoredExceptions.Add(ex);
+                }
                 return View("Error");
             }
-            
-            catch(Exception e)
-            {
-                Console.WriteLine("caught general exception - cardmarket conroller");
-                Console.WriteLine(e);
-                return View("Error");
-            }
-            
-
-
-            /*
-            List<Article> a = new List<Article>() 
-            { 
-                new Article{ enName = "Damnation", price = 1.1f, currencyCode = "GB"},
-                new Article{ enName = "Kadena",    price = 2.2f, currencyCode = "GB"},
-                new Article{ enName = "Volrath",   price = 3.3f, currencyCode = "GB"},
-            };
-
-            List<Order> o = new List<Order>
-            {
-                new Order{user = "seller 1", totalCost = 111f,articles = a},
-                new Order{user = "seller 2", totalCost = 222f,articles = a},
-                new Order{user = "seller 3", totalCost = 333f,articles = a}
-            };
-
-            ApiQueryModel apiModelObj = new ApiQueryModel
-            {
-                orders = o
-            };
-            */
-
-            //return View();
         }
     }
 }
