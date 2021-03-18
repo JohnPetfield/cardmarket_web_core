@@ -14,8 +14,8 @@ namespace CardMarket_Web_Core.Controllers
 {
     public class CardMarketController : Controller
     {
-        IConfiguration config;
-        IDAO iDAO;
+        readonly IConfiguration config;
+        private readonly IDAO iDAO;
 
         public CardMarketController(IConfiguration _config)
         {
@@ -66,12 +66,22 @@ namespace CardMarket_Web_Core.Controllers
             }
             catch (AggregateException ae)
             {
-                //var ignoredExceptions = new List<Exception>();
+                /// <summary>
+                /// https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/how-to-handle-exceptions-in-parallel-loops
+                /// </summary>
 
-                // This is where you can choose which exceptions to handle.
                 foreach (var ex in ae.Flatten().InnerExceptions)
                 {
-                    if (ex is CardNotFoundException)
+                    if (ex is TimeoutException)
+                    {
+                        Console.WriteLine("caught 504 - cardmarket conroller");
+                        Console.WriteLine(ex.Message);
+                        ViewBag.ErrorTitle = "504";
+                        ViewBag.ErrorMessage = "CardMarket's website has timed out.";
+                        return View("Error");
+                    }
+                    
+                    else if (ex is CardNotFoundException)
                     {
                         Console.WriteLine("caught CardNotFoundException - cardmarket conroller");
                         Console.WriteLine(ex.Message);
@@ -85,8 +95,6 @@ namespace CardMarket_Web_Core.Controllers
                         Console.WriteLine("exception message " + ex.Message);
                         return View("Error");
                     }
-
-                        //ignoredExceptions.Add(ex);
                 }
                 return View("Error");
             }

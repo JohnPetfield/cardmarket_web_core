@@ -14,7 +14,6 @@ namespace CardMarket_Web_Core.Exceptions
 
         public CardNotFoundException(string msg): base (msg)
         {
-            Console.WriteLine("CardNotFoundException constructor");
         }
     }
 }
