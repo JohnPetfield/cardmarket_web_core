@@ -15,7 +15,7 @@ namespace CardMarket_Web_Core.Models
 
         //[DataType(DataType.Currency) ]
         //[DisplayFormat(DataFormatString = "{0:C}")]
-        [DisplayFormat(DataFormatString = "{0:n} €")]
+        [DisplayFormat(DataFormatString = "{0:n2} €")]
         [DisplayName("Total Cost:")]
         public float totalCost { get; set; }
 

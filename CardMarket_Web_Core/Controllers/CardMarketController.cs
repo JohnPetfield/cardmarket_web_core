@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using static CardMarket_Web_Core.ApiQueryLogic.APIQuery;
 
@@ -72,11 +73,12 @@ namespace CardMarket_Web_Core.Controllers
 
                 foreach (var ex in ae.Flatten().InnerExceptions)
                 {
-                    if (ex is TimeoutException)
+                    if (ex is WebException)
                     {
-                        Console.WriteLine("caught 504 - cardmarket conroller");
+                        Console.WriteLine("caught webexception - cardmarket conroller");
                         Console.WriteLine(ex.Message);
-                        ViewBag.ErrorTitle = "504";
+                        Console.WriteLine("Exception Type: " + ex.GetType());
+                        ViewBag.ErrorTitle = "webexception";
                         ViewBag.ErrorMessage = "CardMarket's website has timed out.";
                         return View("Error");
                     }
@@ -85,6 +87,7 @@ namespace CardMarket_Web_Core.Controllers
                     {
                         Console.WriteLine("caught CardNotFoundException - cardmarket conroller");
                         Console.WriteLine(ex.Message);
+                        Console.WriteLine("Exception Type: " + ex.GetType());
                         ViewBag.ErrorTitle = "Card Name";
                         ViewBag.ErrorMessage = ex.Message;
                         return View("Error");
