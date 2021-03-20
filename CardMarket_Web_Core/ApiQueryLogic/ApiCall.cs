@@ -12,7 +12,7 @@ namespace CardMarket_Web_Core.ApiQueryLogic
 {
     public class ApiCall
     {
-        List<Article> cumulativeArticleList;
+        //List<Article> cumulativeArticleList;
         JsonSerializerSettings JsonSerializerSettings;
         RequestHelper myRequest ;
 
@@ -25,11 +25,13 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
             myRequest = new RequestHelper();
-            this.cumulativeArticleList = new List<Article>();
+            //this.cumulativeArticleList = new List<Article>();
         }
 
-        private void ProductForEach(ProductObj returnProductObj)
+        private List<Article> GetArticleFromProductForEach(ProductObj returnProductObj)
         {
+            List<Article> cumulativeArticleList = new List<Article>();
+
             Parallel.ForEach(returnProductObj.product, p =>
             {
                 #region productloop
@@ -77,6 +79,8 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                 }
                 #endregion
             }); //Parallel.ForEach product
+
+            return cumulativeArticleList;
         }
         
         public List<List<Article>> Run( Input inputObj, IDAO _iDAO)
@@ -119,8 +123,8 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                 }
 
                 #region productLoop
-                
 
+                List<Article> cumulativeArticleList;
                 if (returnProductObj != null)
                 {
                     /// Parallel.ForEach
@@ -129,7 +133,7 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                     /// adds returnArticleObj to cumulativeArticleList, 
                     /// cumulativeArticleList probably needs to be 
 
-                    ProductForEach(returnProductObj);
+                    cumulativeArticleList = GetArticleFromProductForEach(returnProductObj);
 
 
                 }
@@ -141,7 +145,7 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                 #endregion
 
                 // Sort each list of Articles in username order
-                this.cumulativeArticleList.Sort((x, y) => x.seller.username.CompareTo(y.seller.username));
+                cumulativeArticleList.Sort((x, y) => x.seller.username.CompareTo(y.seller.username));
 
                 articlesConsolidatedUsingMetaproductId.Add(cumulativeArticleList);
                 #endregion

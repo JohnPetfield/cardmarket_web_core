@@ -49,7 +49,6 @@ namespace CardMarket_Web_Core.ApiQueryLogic
         {
 
             var all = OrderListOfLists(articlesConsolidatedUsingMetaproductId);
-            var all = OrderListOfLists(articlesConsolidatedUsingMetaproductId);
 
             ///compareResults filters out sellers who don't have all the wanted cards for sale,
             ///    leaving a list of sellers who I can purchase all the cards from
