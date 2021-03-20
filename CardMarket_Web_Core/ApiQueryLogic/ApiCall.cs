@@ -10,24 +10,86 @@ using Newtonsoft.Json;
 
 namespace CardMarket_Web_Core.ApiQueryLogic
 {
-    static public class ApiCall
+    public class ApiCall
     {
-        static public List<List<Article>> Run( Input inputObj, IDAO _iDAO)
+        //List<Article> cumulativeArticleList;
+        JsonSerializerSettings JsonSerializerSettings;
+        RequestHelper myRequest ;
+
+        public ApiCall()
         {
-            IDAO iDao = _iDAO;
-
-            List<List<Article>> articlesConsolidatedUsingMetaproductId = new List<List<Article>>();
-
-            RequestHelper myRequest = new RequestHelper();
-
-            var exceptions = new ConcurrentQueue<Exception>();
             /// https://stackoverflow.com/questions/31813055/how-to-handle-null-empty-values-in-jsonconvert-deserializeobject
-            var settings = new JsonSerializerSettings
+            JsonSerializerSettings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
+            myRequest = new RequestHelper();
+            //this.cumulativeArticleList = new List<Article>();
+        }
 
+        private List<Article> GetArticleFromProductForEach(ProductObj returnProductObj)
+        {
+            List<Article> cumulativeArticleList = new List<Article>();
+
+            Parallel.ForEach(returnProductObj.product, p =>
+            {
+                #region productloop
+                Console.WriteLine(p.enName +
+                                " Product ID: " + p.idProduct +
+                                " Metaproduct ID: " + p.idMetaproduct +
+                                " Expansion: " + p.expansionName);
+
+                /** Find Articles for each given product v2.0 */
+
+                String url = "https://api.cardmarket.com/ws/v2.0/output.json/articles/" + p.idProduct
+                    + "?idLanguage=1&isAltered=false&isFoil=false&isSigned=false";
+                //+ "?idLanguage=1";
+
+                Console.WriteLine("Article API call - started");
+
+                ArticleObj returnArticleObj = JsonConvert.DeserializeObject<ArticleObj>(myRequest.MakeRequest(url), JsonSerializerSettings);
+
+                Console.WriteLine("Article API call - completed");
+
+                if (returnArticleObj != null)
+                {
+                    int articleCount = 0;
+
+                    foreach (Article a in returnArticleObj.article)
+                    {
+                        // products should be stored in dictionary, then this could be just looked up whenever needed??
+                        a.idMetaproduct = p.idMetaproduct;
+                        a.enName = p.enName;
+                        articleCount++;
+                    } // foreach Article
+
+                    //Console.WriteLine("articleCount: " + articleCount);
+                    cumulativeArticleList.AddRange(returnArticleObj.article);
+
+                } // article !=null
+                else
+                {
+                    Console.WriteLine("------");
+                    Console.WriteLine("returnArticleObj NULL --- enName: " + p.enName +
+                                    " idProduct: " + p.idProduct +
+                                    " idMetaproduct: " + p.idMetaproduct +
+                                    " expansionName: " + p.expansionName);
+                    Console.WriteLine("------");
+                }
+                #endregion
+            }); //Parallel.ForEach product
+
+            return cumulativeArticleList;
+        }
+        
+        public List<List<Article>> Run( Input inputObj, IDAO _iDAO)
+         {
+            IDAO iDao = _iDAO;
+
+            List<List<Article>> articlesConsolidatedUsingMetaproductId = new List<List<Article>>();
+
+            var exceptions = new ConcurrentQueue<Exception>();
 
             Parallel.ForEach(inputObj.cardNamesList, cardName =>
             {
@@ -45,7 +107,7 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                 {
                     Console.WriteLine("Product Info for card: [[{0}]] not held on DB.", cardName);
                     Console.WriteLine("Product API call - started");
-                    returnProductObj = JsonConvert.DeserializeObject<ProductObj>(myRequest.MakeRequest(url), settings);
+                    returnProductObj = JsonConvert.DeserializeObject<ProductObj>(myRequest.MakeRequest(url), JsonSerializerSettings);
                     Console.WriteLine("Product API call - ended");
 
                     if (returnProductObj != null &&
@@ -61,57 +123,19 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                 }
 
                 #region productLoop
-                List<Article> cumulativeArticleList = new List<Article>();
 
+                List<Article> cumulativeArticleList;
                 if (returnProductObj != null)
                 {
-                    Parallel.ForEach(returnProductObj.product, p =>
-                    {
-                        #region productloop
-                        Console.WriteLine(p.enName +
-                                        " Product ID: " + p.idProduct +
-                                        " Metaproduct ID: " + p.idMetaproduct +
-                                        " Expansion: " + p.expansionName);
+                    /// Parallel.ForEach
+                    /// INPUTS  ProductObj returnProductObj
+                    /// OUTPUTS NONE
+                    /// adds returnArticleObj to cumulativeArticleList, 
+                    /// cumulativeArticleList probably needs to be 
 
-                        /** Find Articles for each given product v2.0 */
+                    cumulativeArticleList = GetArticleFromProductForEach(returnProductObj);
 
-                        url = "https://api.cardmarket.com/ws/v2.0/output.json/articles/" + p.idProduct
-                            + "?idLanguage=1&isAltered=false&isFoil=false&isSigned=false";
-                        //+ "?idLanguage=1";
 
-                        Console.WriteLine("Article API call - started");
-
-                        ArticleObj returnArticleObj = JsonConvert.DeserializeObject<ArticleObj>(myRequest.MakeRequest(url), settings);
-
-                        Console.WriteLine("Article API call - completed");
-
-                        if (returnArticleObj != null)
-                        {
-                            int articleCount = 0;
-
-                            foreach (Article a in returnArticleObj.article)
-                            {
-                                // products should be stored in dictionary, then this could be just looked up whenever needed??
-                                a.idMetaproduct = p.idMetaproduct;
-                                a.enName = p.enName;
-                                articleCount++;
-                            } // foreach Article
-
-                            //Console.WriteLine("articleCount: " + articleCount);
-                            cumulativeArticleList.AddRange(returnArticleObj.article);
-
-                        } // article !=null
-                        else
-                        {
-                            Console.WriteLine("------");
-                            Console.WriteLine("returnArticleObj NULL --- enName: " + p.enName +
-                                            " idProduct: " + p.idProduct +
-                                            " idMetaproduct: " + p.idMetaproduct +
-                                            " expansionName: " + p.expansionName);
-                            Console.WriteLine("------");
-                        }
-                        #endregion
-                    });
                 }
                 else
                 {

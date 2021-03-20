@@ -48,8 +48,6 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                                                 Input inputObj)
         {
 
-            Console.WriteLine("MyListOps.OrganiseData");
-
             var all = OrderListOfLists(articlesConsolidatedUsingMetaproductId);
 
             ///compareResults filters out sellers who don't have all the wanted cards for sale,

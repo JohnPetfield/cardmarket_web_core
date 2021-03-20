@@ -67,9 +67,7 @@ namespace CardMarket_Web_Core.Controllers
             }
             catch (AggregateException ae)
             {
-                /// <summary>
                 /// https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/how-to-handle-exceptions-in-parallel-loops
-                /// </summary>
 
                 foreach (var ex in ae.Flatten().InnerExceptions)
                 {

@@ -24,15 +24,6 @@ namespace CardMarket_Web_Core.Models
 
         public List<string> cardNamesList;
 
-        /*
-        public Input(List<string> _listCardNames, string _cardNames, string _countryCode = "")
-        {
-            listCardNames = _cardNames;
-            countryCode = _countryCode;
-            singleCountryOnly = (countryCode != "");
-        }
-        */
-
         public Input(List<string> _listCardNames, string _countryCode = "")
         {
             //cardNamesList = _listCardNames;
@@ -45,15 +36,6 @@ namespace CardMarket_Web_Core.Models
             //cardNamesList = _listCardNames.Split('|').ToList();
             countryCode = _countryCode;
             singleCountryOnly = (countryCode != "");
-
-            /*
-            Console.WriteLine("constructor that converts comma list to c# list");
-
-            foreach(string name in listCardNames)
-            {
-                Console.WriteLine(name);
-            }
-            */
         }
 
         public void PrepareInput()
@@ -67,7 +49,6 @@ namespace CardMarket_Web_Core.Models
                 countryCode = countryCode.ToUpper();
                 singleCountryOnly = (countryCode != "");
             }
-                //cardNamesList = cardNamesString.Split('|').ToList();
 
             //https://stackoverflow.com/questions/2245442/split-a-string-by-another-string-in-c-sharp
             // splits a string by word, that 'word' been the new line in the text area 
@@ -77,7 +58,5 @@ namespace CardMarket_Web_Core.Models
         public Input()
         {
         }
-
-        //public string testStringForTextArea{ get; set; }
     }
 }
