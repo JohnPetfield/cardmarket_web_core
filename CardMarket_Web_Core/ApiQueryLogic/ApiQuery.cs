@@ -55,7 +55,8 @@ namespace CardMarket_Web_Core.ApiQueryLogic
             #region getData
             try
             {
-                articlesConsolidatedUsingMetaproductId = ApiCall.Run(inputObj, iDao);
+                ApiCall apiCall = new ApiCall();
+                articlesConsolidatedUsingMetaproductId = apiCall.Run(inputObj, iDao);
             }
             catch (Exception e)
             {
