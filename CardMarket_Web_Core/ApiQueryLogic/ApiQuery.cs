@@ -73,7 +73,7 @@ namespace CardMarket_Web_Core.ApiQueryLogic
             /// Organise data takes the data from API calls and does all the 
             /// processing / grouping / filtering to create the orders and order them
 
-            return MyListOps.OrganiseData(articlesConsolidatedUsingMetaproductId,inputObj);
+            return MyListOps.OrganiseDataAfterApiCalls(articlesConsolidatedUsingMetaproductId,inputObj);
             #endregion
         }
     }

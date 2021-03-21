@@ -82,7 +82,38 @@ namespace CardMarket_Web_Core.ApiQueryLogic
 
             return cumulativeArticleList;
         }
-        
+
+        private ProductObj GetProductObjFromCardName(IDAO iDao, String cardName )
+        {
+            ProductObj productObj;
+
+            bool haveProductInfo = iDao.HasProductInfo(cardName, out productObj);
+
+            String url = "https://api.cardmarket.com/ws/v2.0/output.json/products/find?search="
+                        + cardName + "&exact=true&idGame=1&idLanguage=1";
+
+            if (!haveProductInfo)
+            {
+                Console.WriteLine("Product Info for card: [[{0}]] not held on DB.", cardName);
+                Console.WriteLine("Product API call - started");
+                productObj = JsonConvert.DeserializeObject<ProductObj>(myRequest.MakeRequest(url), JsonSerializerSettings);
+                Console.WriteLine("Product API call - ended");
+
+                if (productObj != null &&
+                    productObj.product.Count() > 0)
+                {
+                    // save to DB
+                    iDao.AddProduct(productObj);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Product Info for card: [[{0}]] is held on DB, no API call needed.", cardName);
+            }
+
+            return productObj;
+        }
+
         public List<List<Article>> Run( Input inputObj, IDAO _iDAO)
          {
             IDAO iDao = _iDAO;
@@ -95,47 +126,15 @@ namespace CardMarket_Web_Core.ApiQueryLogic
             {
                 #region wantedCards
                 /** Find all Products for each cardName */
+                ProductObj productObj = new ProductObj();
 
-                ProductObj returnProductObj = new ProductObj();
-
-                bool haveProductInfo = iDao.HasProductInfo(cardName, out returnProductObj);
-
-                String url = "https://api.cardmarket.com/ws/v2.0/output.json/products/find?search="
-                            + cardName + "&exact=true&idGame=1&idLanguage=1";
-
-                if (!haveProductInfo)
-                {
-                    Console.WriteLine("Product Info for card: [[{0}]] not held on DB.", cardName);
-                    Console.WriteLine("Product API call - started");
-                    returnProductObj = JsonConvert.DeserializeObject<ProductObj>(myRequest.MakeRequest(url), JsonSerializerSettings);
-                    Console.WriteLine("Product API call - ended");
-
-                    if (returnProductObj != null &&
-                        returnProductObj.product.Count() > 0)
-                    {
-                        // save to DB
-                        iDao.AddProduct(returnProductObj);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Product Info for card: [[{0}]] is held on DB, no API call needed.", cardName);
-                }
-
+                productObj = this.GetProductObjFromCardName(iDao, cardName);
                 #region productLoop
 
                 List<Article> cumulativeArticleList;
-                if (returnProductObj != null)
+                if (productObj != null)
                 {
-                    /// Parallel.ForEach
-                    /// INPUTS  ProductObj returnProductObj
-                    /// OUTPUTS NONE
-                    /// adds returnArticleObj to cumulativeArticleList, 
-                    /// cumulativeArticleList probably needs to be 
-
-                    cumulativeArticleList = GetArticleFromProductForEach(returnProductObj);
-
-
+                    cumulativeArticleList = this.GetArticleFromProductForEach(productObj);
                 }
                 else
                 {

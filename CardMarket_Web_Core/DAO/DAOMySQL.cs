@@ -37,25 +37,8 @@ namespace CardMarket_Web_Core.DbCode
                     command.Parameters.AddWithValue("@metaproductid", p.idMetaproduct);
                     command.Parameters.AddWithValue("@expansionname", p.expansionName);
 
-                    /*
-                    command.Parameters.Add("@cardname", System.Data.SqlDbType.VarChar, 40).Value = p.enName;
-                    command.Parameters.Add("@productid", System.Data.SqlDbType.Int, 40).Value = p.idProduct;
-                    command.Parameters.Add("@metaproductid", System.Data.SqlDbType.Int, 40).Value = p.idMetaproduct;
-                    command.Parameters.Add("@expansionname", System.Data.SqlDbType.VarChar, 40).Value = p.expansionName;
-                    */
-                    /*
-                    try
-                    {
-                     */
                     command.ExecuteNonQuery();
                     Console.WriteLine("try addproduct ");
-                    /*
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
-                    */
                 }
             }
         }
@@ -70,12 +53,7 @@ namespace CardMarket_Web_Core.DbCode
 
             using (conn = new MySqlConnection(myConnectionString))
             {
-                /*
-                try
-                {
-                    */
                 conn.Open();
-                //Console.WriteLine($"MySQL version : {conn.ServerVersion}");
 
                 MySqlCommand myCommand = new MySqlCommand(sqlStatement, conn);
 
@@ -103,14 +81,6 @@ namespace CardMarket_Web_Core.DbCode
                 if (retProducObj != null && retProducObj.product.Count > 0)
                     return true;
                 else return false;
-                /*
-                }
-                catch (MySql.Data.MySqlClient.MySqlException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                    retProducObj = null;
-                    return false;
-                }  */
             }
         }
     }

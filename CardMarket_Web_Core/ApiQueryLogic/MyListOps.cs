@@ -44,8 +44,8 @@ namespace CardMarket_Web_Core.ApiQueryLogic
             return returnList;
         }
 
-        public static List<Order> OrganiseData(List<List<Article>> articlesConsolidatedUsingMetaproductId,
-                                                Input inputObj)
+        public static List<Order> OrganiseDataAfterApiCalls(List<List<Article>> articlesConsolidatedUsingMetaproductId,
+                                                            Input inputObj)
         {
 
             var all = OrderListOfLists(articlesConsolidatedUsingMetaproductId);
@@ -125,6 +125,28 @@ namespace CardMarket_Web_Core.ApiQueryLogic
             Console.WriteLine("ApiQuery - completed");
             return potentialOrders;
             //return new List<Order>();
+        }
+
+        public static List<ProductObj> ProductObjListFromUnsortedProductObj(List<Product> productList,
+                                                                            List<string> cardList)
+        {
+            List<ProductObj> productObjsList = new List<ProductObj>();
+
+            foreach (String cardName in cardList)
+            {
+                ProductObj productObj = new ProductObj();
+
+                foreach (Product p in productList)
+                {
+                    if (p.enName == cardName)
+                    {
+                        productObj.product.Add(p);
+                    }
+                }
+
+                productObjsList.Add(productObj);
+            }
+            return productObjsList;
         }
     }
 }
