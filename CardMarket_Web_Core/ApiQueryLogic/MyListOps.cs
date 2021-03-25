@@ -138,12 +138,14 @@ namespace CardMarket_Web_Core.ApiQueryLogic
 
                 foreach (Product p in productList)
                 {
-                    if (p.enName == cardName)
+
+                    if (p.enName.StartsWith( cardName))
                     {
+                        productObj.cardName = cardName;
+                        productObj.storedOnDb = true;
                         productObj.product.Add(p);
                     }
                 }
-
                 productObjsList.Add(productObj);
             }
             return productObjsList;

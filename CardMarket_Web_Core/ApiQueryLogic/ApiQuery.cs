@@ -55,8 +55,43 @@ namespace CardMarket_Web_Core.ApiQueryLogic
             #region getData
             try
             {
+                List<Product> products = iDao.GetAllProductsFromDB(inputObj.cardNamesList);
+
+                List<ProductObj> productObjs = MyListOps.ProductObjListFromUnsortedProductObj(products, inputObj.cardNamesList);
+
+                /*
+                Console.WriteLine("=========");
+                Console.WriteLine("new DAO method - start");
+                Console.WriteLine("=========");
+                int i = 0;
+                foreach (ProductObj productObj in productObjs)
+                {
+                    Console.WriteLine(i);
+                    i++;
+                    foreach (Product product in productObj.product)
+                    {
+                        Console.WriteLine(product.enName + " - " + product.expansionName + " - " + product.idProduct);
+                    }
+                }
+
+                Console.WriteLine("new DAO method - end");
+                Console.WriteLine("=========");
+                */
+
                 ApiCall apiCall = new ApiCall();
-                articlesConsolidatedUsingMetaproductId = apiCall.Run(inputObj, iDao);
+                articlesConsolidatedUsingMetaproductId = apiCall.Run(inputObj, iDao, productObjs);
+                
+                if(apiCall.productObjsToSaveToDb != null && 
+                   apiCall.productObjsToSaveToDb.Count > 0)
+                {
+                    Console.WriteLine("about to save all productsDB");
+                    iDao.SaveAllProductsDB(apiCall.productObjsToSaveToDb);
+                }
+                /// ApiCall to have a list of ProductObj,
+                /// when I'm currently calling idao.AddProduct, this should simple add the productObj
+                /// to the list, then here after apiCall.Run has finished we can get the list and pass it to the 
+                /// DAO to save all products in one go.
+
             }
             catch (Exception e)
             {

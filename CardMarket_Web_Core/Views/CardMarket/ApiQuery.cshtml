@@ -13,7 +13,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="cardNamesString" class="control-label"></label>
-                <textarea asp-for="cardNamesString" class="form-control" style="height:90px; width:300px"></textarea>
+                <textarea asp-for="cardNamesString" class="form-control" style="height:6em;"  onkeyup="autoGrow(this);"></textarea>
                 <span asp-validation-for="cardNamesString" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -34,4 +34,15 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script type="text/javascript">
+        
+        function autoGrow(oField)
+        {
+            if (oField.scrollHeight > oField.clientHeight)
+            {
+                oField.style.height = oField.scrollHeight + "px";
+            }
+        }
+    </script>
 }

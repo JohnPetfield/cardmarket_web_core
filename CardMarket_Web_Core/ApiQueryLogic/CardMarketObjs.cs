@@ -14,6 +14,9 @@ namespace CardMarket_Web_Core.ApiQueryLogic
          */
     public class ProductObj
     {
+        public bool storedOnDb;
+        public string cardName;
+
         public List<Product> product;
         public List<Link> links;
 

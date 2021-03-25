@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 using MySql.Data.MySqlClient;
 using Microsoft.Extensions.Configuration;
+using CardMarket_Web_Core.DAO;
 
 namespace CardMarket_Web_Core.DbCode
 {
-    public class DAOMySQL : IDAO
+    public class DAOMySQL : DAObase, IDAO
     {
         private string myConnectionString;
         MySqlConnection conn;
@@ -20,44 +21,24 @@ namespace CardMarket_Web_Core.DbCode
             myConnectionString = _s;
         }
 
-        public void AddProduct(ProductObj productobj)
+        public List<Product> GetAllProductsFromDB(List<string> cardNamesList)
         {
-            string sqlStatement = "insert into Product (cardname, productid, metaproductid, expansionname) " +
-                "values(@cardname, @productid, @metaproductid,@expansionname)";
+            List<Product> retProducObj = new List<Product>();
 
-            using (MySqlConnection connection = new MySqlConnection(myConnectionString))
-            {
-                connection.Open();
-                foreach (Product p in productobj.product)
-                {
-                    MySqlCommand command = new MySqlCommand(sqlStatement, connection);
+            /// convert list to comma string
+            ///https://stackoverflow.com/questions/799446/creating-a-comma-separated-list-from-iliststring-or-ienumerablestring
 
-                    command.Parameters.AddWithValue("@cardname", p.enName);
-                    command.Parameters.AddWithValue("@productid", p.idProduct);
-                    command.Parameters.AddWithValue("@metaproductid", p.idMetaproduct);
-                    command.Parameters.AddWithValue("@expansionname", p.expansionName);
+            string cardNamesSqlSection = this.ListToStringForSQL(cardNamesList);
+            //string sqlStatement = "select * from Product where cardname in (" + cardNames + " )";
+            string sqlStatement = "select * from Product where  (" + cardNamesSqlSection + " )";
 
-                    command.ExecuteNonQuery();
-                    Console.WriteLine("try addproduct ");
-                }
-            }
-        }
-
-        public bool HasProductInfo(string cardName, out ProductObj retProducObj)
-        {
-            //Console.WriteLine("HasProductInfo: " + cardName);
-            //Console.WriteLine(config.GetConnectionString("DefaultConnection"));
-
-            string sqlStatement = "select * from Product where cardname = @cardname";
-            retProducObj = new ProductObj();
+            Console.WriteLine(sqlStatement);
 
             using (conn = new MySqlConnection(myConnectionString))
             {
                 conn.Open();
 
                 MySqlCommand myCommand = new MySqlCommand(sqlStatement, conn);
-
-                myCommand.Parameters.AddWithValue("@cardname", cardName);
 
                 MySqlDataReader myReader;
 
@@ -75,12 +56,35 @@ namespace CardMarket_Web_Core.DbCode
                         expansionName = myReader["expansionname"].ToString().Trim()
                     };
 
-                    retProducObj.product.Add(p);
+                    retProducObj.Add(p);
                 }
+                return retProducObj;
+            }
+        }
 
-                if (retProducObj != null && retProducObj.product.Count > 0)
-                    return true;
-                else return false;
+        public void SaveAllProductsDB(List<ProductObj> productObjList)
+        {
+            string sqlStatement = "insert into Product (cardname, productid, metaproductid,expansionname) " +
+                      "values(@cardname, @productid, @metaproductid,@expansionname)";
+
+            using (MySqlConnection connection = new MySqlConnection(myConnectionString))
+            {
+                connection.Open();
+                foreach (ProductObj productObj in productObjList)
+                {
+
+                    foreach (Product p in productObj.product)
+                    {
+                        MySqlCommand command = new MySqlCommand(sqlStatement, connection);
+
+                        command.Parameters.AddWithValue("@cardname", p.enName);
+                        command.Parameters.AddWithValue("@productid", p.idProduct);
+                        command.Parameters.AddWithValue("@metaproductid", p.idMetaproduct);
+                        command.Parameters.AddWithValue("@expansionname", p.expansionName);
+
+                        command.ExecuteNonQuery();
+                    }
+                }
             }
         }
     }
