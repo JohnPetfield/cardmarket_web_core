@@ -32,8 +32,6 @@ namespace CardMarket_Web_Core.DbCode
             //string sqlStatement = "select * from Product where cardname in (" + cardNames + " )";
             string sqlStatement = "select * from Product where  (" + cardNamesSqlSection + " )";
 
-            Console.WriteLine(sqlStatement);
-
             using (conn = new MySqlConnection(myConnectionString))
             {
                 conn.Open();
@@ -46,8 +44,6 @@ namespace CardMarket_Web_Core.DbCode
 
                 while (myReader.Read())
                 {
-                    //Console.WriteLine(myReader["cardname"]);
-
                     Product p = new Product()
                     {
                         enName = myReader["cardname"].ToString().Trim(),

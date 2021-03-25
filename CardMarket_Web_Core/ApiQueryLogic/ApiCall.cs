@@ -95,64 +95,63 @@ namespace CardMarket_Web_Core.ApiQueryLogic
 
                 #region wantedCards
 
-                // See if cardname is on DB
-                ProductObj productObj = new ProductObj();
+                    // See if cardname is on DB
+                    ProductObj productObj = new ProductObj();
 
-                if (productObjs != null)
-                {
-                    foreach(ProductObj po in productObjs)
+                    if (productObjs != null)
                     {
-                        if (po != null &&
-                            po.cardName != null && 
-                            po.cardName.StartsWith(cardName))
+                        foreach (ProductObj po in productObjs)
                         {
-                            productObj = po;
-                            Console.WriteLine("found " + cardName + " from new DAO method");
+                            if (po != null &&
+                               !String.IsNullOrWhiteSpace(po.cardName) &&
+                               !String.IsNullOrEmpty(po.cardName) &&
+                                po.cardName.StartsWith(cardName))
+                            {
+                                productObj = po;
+                                Console.WriteLine("found [[" + cardName + "]] on DB.");
+                            }
                         }
                     }
-                }
 
-                // Not found on DB, make API call to get product info
-                if (productObj == null || productObj.cardName == null)
-                {
-                    Console.WriteLine(cardName + " not found make API product call");
-
-                    String url = "https://api.cardmarket.com/ws/v2.0/output.json/products/find?search="
-                               + cardName + "&exact=true&idGame=1&idLanguage=1";
-
-                    Console.WriteLine("Product Info for card: [[{0}]] not held on DB.", cardName);
-                    Console.WriteLine("Product API call - started");
-                    productObj = JsonConvert.DeserializeObject<ProductObj>(myRequest.MakeRequest(url), JsonSerializerSettings);
-                    Console.WriteLine("Product API call - ended");
-
-                    if (productObj != null &&
-                        productObj.product.Count() > 0)
+                    // Not found on DB, make API call to get product info
+                    if (productObj == null || productObj.cardName == null)
                     {
-                        // save to DB
-                        //iDao.AddProduct(productObj);
-                        productObjsToSaveToDb.Add(productObj);
+                        String url = "https://api.cardmarket.com/ws/v2.0/output.json/products/find?search="
+                                   + cardName + "&exact=true&idGame=1&idLanguage=1";
+
+                        Console.WriteLine("Product Info for card: [[{0}]] not held on DB.", cardName);
+                        Console.WriteLine("Product API call - started");
+                        productObj = JsonConvert.DeserializeObject<ProductObj>(myRequest.MakeRequest(url), JsonSerializerSettings);
+                        Console.WriteLine("Product API call - ended");
+
+                        if (productObj != null &&
+                            productObj.product.Count() > 0)
+                        {
+                            // save to DB
+                            //iDao.AddProduct(productObj);
+                            productObjsToSaveToDb.Add(productObj);
+                        }
                     }
-                }
 
-                #region productLoop
+                    #region productLoop
 
-                List<Article> cumulativeArticleList;
-                if (productObj != null && productObj.cardName != "")
-                {
-                    cumulativeArticleList = this.GetArticleFromProductForEach(productObj);
-                }
-                else
-                {
-                    Console.WriteLine("throw custom cardnotfound exception");
-                    throw new CardNotFoundException("Card: [[" + cardName + "]] not found.");
-                }
-                #endregion
+                    List<Article> cumulativeArticleList;
+                    if (productObj != null && productObj.cardName != "")
+                    {
+                        cumulativeArticleList = this.GetArticleFromProductForEach(productObj);
+                    }
+                    else
+                    {
+                        Console.WriteLine("throw custom cardnotfound exception");
+                        throw new CardNotFoundException("Card: [[" + cardName + "]] not found.");
+                    }
+                    #endregion
 
-                // Sort each list of Articles in username order
-                cumulativeArticleList.Sort((x, y) => x.seller.username.CompareTo(y.seller.username));
+                    // Sort each list of Articles in username order
+                    cumulativeArticleList.Sort((x, y) => x.seller.username.CompareTo(y.seller.username));
 
-                articlesConsolidatedUsingMetaproductId.Add(cumulativeArticleList);
-                #endregion
+                    articlesConsolidatedUsingMetaproductId.Add(cumulativeArticleList);
+                    #endregion
             });  // Parallel.ForEach cardName
 
             return articlesConsolidatedUsingMetaproductId;

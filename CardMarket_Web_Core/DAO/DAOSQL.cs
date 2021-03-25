@@ -55,12 +55,7 @@ namespace CardMarket_Web_Core.DbCode
 
             string cardNamesSqlSection = ListToStringForSQL(cardNamesList);
 
-            Console.WriteLine(cardNamesSqlSection);
-            //string sqlStatement = "select * from dbo.Product where cardname in (" + cardNames + " )";
-
             string sqlStatement = "select * from Product where  (" + cardNamesSqlSection + " )";
-
-            Console.WriteLine(sqlStatement);
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -78,8 +73,6 @@ namespace CardMarket_Web_Core.DbCode
                         idMetaproduct = (int)reader["metaproductid"],
                         expansionName = reader["expansionname"].ToString().Trim()
                     };
-
-                    Console.WriteLine("DB name: " + p.enName);
 
                     retProducObj.Add(p);
                 }

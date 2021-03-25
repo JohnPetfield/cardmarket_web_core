@@ -59,25 +59,6 @@ namespace CardMarket_Web_Core.ApiQueryLogic
 
                 List<ProductObj> productObjs = MyListOps.ProductObjListFromUnsortedProductObj(products, inputObj.cardNamesList);
 
-                /*
-                Console.WriteLine("=========");
-                Console.WriteLine("new DAO method - start");
-                Console.WriteLine("=========");
-                int i = 0;
-                foreach (ProductObj productObj in productObjs)
-                {
-                    Console.WriteLine(i);
-                    i++;
-                    foreach (Product product in productObj.product)
-                    {
-                        Console.WriteLine(product.enName + " - " + product.expansionName + " - " + product.idProduct);
-                    }
-                }
-
-                Console.WriteLine("new DAO method - end");
-                Console.WriteLine("=========");
-                */
-
                 ApiCall apiCall = new ApiCall();
                 articlesConsolidatedUsingMetaproductId = apiCall.Run(inputObj, iDao, productObjs);
                 

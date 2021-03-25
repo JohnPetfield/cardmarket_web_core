@@ -26,20 +26,27 @@ namespace CardMarket_Web_Core.Models
 
         public Input(List<string> _listCardNames, string _countryCode = "")
         {
-            //cardNamesList = _listCardNames;
             countryCode = _countryCode;
             singleCountryOnly = (countryCode != "");
         }
 
         public Input(string _listCardNames, string _countryCode = "")
         {
-            //cardNamesList = _listCardNames.Split('|').ToList();
             countryCode = _countryCode;
             singleCountryOnly = (countryCode != "");
         }
 
         public void PrepareInput()
         {
+            cardNamesString = cardNamesString.Replace("\r\n", ",");
+            cardNamesString = cardNamesString.Trim(',');
+
+            ///https://stackoverflow.com/questions/2235683/easiest-way-to-parse-a-comma-delimited-string-to-some-kind-of-object-i-can-loop
+            cardNamesList = cardNamesString.Split(',').Select(sValue => sValue.Trim()).ToList();
+
+            /// https://stackoverflow.com/questions/3069748/how-to-remove-all-the-null-elements-inside-a-generic-list-in-one-go
+            cardNamesList.RemoveAll(item => item == "");
+
             if (countryCode == null)
             {
                 singleCountryOnly = false;
@@ -49,10 +56,6 @@ namespace CardMarket_Web_Core.Models
                 countryCode = countryCode.ToUpper();
                 singleCountryOnly = (countryCode != "");
             }
-
-            //https://stackoverflow.com/questions/2245442/split-a-string-by-another-string-in-c-sharp
-            // splits a string by word, that 'word' been the new line in the text area 
-            cardNamesList = cardNamesString.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList();
         }
 
         public Input()
