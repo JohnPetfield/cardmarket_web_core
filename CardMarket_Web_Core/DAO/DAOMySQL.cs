@@ -20,44 +20,6 @@ namespace CardMarket_Web_Core.DbCode
         {
             myConnectionString = _s;
         }
-
-        public List<Product> GetAllProductsFromDB(List<string> cardNamesList)
-        {
-            List<Product> retProducObj = new List<Product>();
-
-            /// convert list to comma string
-            ///https://stackoverflow.com/questions/799446/creating-a-comma-separated-list-from-iliststring-or-ienumerablestring
-
-            string cardNamesSqlSection = this.ListToStringForSQL(cardNamesList);
-            //string sqlStatement = "select * from Product where cardname in (" + cardNames + " )";
-            string sqlStatement = "select * from Product where  (" + cardNamesSqlSection + " )";
-
-            using (conn = new MySqlConnection(myConnectionString))
-            {
-                conn.Open();
-
-                MySqlCommand myCommand = new MySqlCommand(sqlStatement, conn);
-
-                MySqlDataReader myReader;
-
-                myReader = myCommand.ExecuteReader();
-
-                while (myReader.Read())
-                {
-                    Product p = new Product()
-                    {
-                        enName = myReader["cardname"].ToString().Trim(),
-                        idProduct = (int)myReader["productid"],
-                        idMetaproduct = (int)myReader["metaproductid"],
-                        expansionName = myReader["expansionname"].ToString().Trim()
-                    };
-
-                    retProducObj.Add(p);
-                }
-                return retProducObj;
-            }
-        }
-
         public void SaveAllProductsDB(List<ProductObj> productObjList)
         {
             string sqlStatement = "insert into Product (cardname, productid, metaproductid,expansionname) " +
@@ -83,5 +45,50 @@ namespace CardMarket_Web_Core.DbCode
                 }
             }
         }
+
+        public List<Product> GetAllProductsFromDB(List<string> cardNamesList)
+        {
+            List<Product> retProducObj = new List<Product>();
+
+            /// convert list to comma string
+            ///https://stackoverflow.com/questions/799446/creating-a-comma-separated-list-from-iliststring-or-ienumerablestring
+
+            string cardNamesSqlSection = this.ListToStringForSQL(cardNamesList);
+
+            string sqlStatement = "select * from Product where  (" + cardNamesSqlSection + " )";
+
+            using (conn = new MySqlConnection(myConnectionString))
+            {
+                conn.Open();
+
+                MySqlCommand myCommand = new MySqlCommand(sqlStatement, conn);
+
+                int i = 0;
+                foreach (string s in cardNamesList)
+                {
+                    i++;
+                    myCommand.Parameters.AddWithValue("@name" + i.ToString(), "%" + s + "%");
+                }
+
+                MySqlDataReader myReader;
+
+                myReader = myCommand.ExecuteReader();
+
+                while (myReader.Read())
+                {
+                    Product p = new Product()
+                    {
+                        enName = myReader["cardname"].ToString().Trim(),
+                        idProduct = (int)myReader["productid"],
+                        idMetaproduct = (int)myReader["metaproductid"],
+                        expansionName = myReader["expansionname"].ToString().Trim()
+                    };
+
+                    retProducObj.Add(p);
+                }
+                return retProducObj;
+            }
+        }
+
     }
 }

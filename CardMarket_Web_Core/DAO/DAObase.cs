@@ -9,26 +9,20 @@ namespace CardMarket_Web_Core.DAO
     {
         public string ListToStringForSQL(List<string> cardNamesList)
         {
+            int i = 0;
+            
             string output = "";
 
             foreach (string cardName in cardNamesList)
             {
-                /// add a comma in front cardname if not the first one
-                //output += ((output == "") ? "" : ",")
-                  //      + "'" + cardName + "'";
-
+                i++;
                 if (cardName != null && cardName != "")
                 {
                     output += ((output == "") ? "" : " OR ") +
-                                "cardname LIKE '" + cardName + "%'";
+                                "cardname LIKE " + "@name" + i.ToString() + "";
                 }
-                /// for new like % 
-                /// cardname like goes in front of cardname
-                /// %' goes after
-                /// then an or can go where the comma goes above
             }
             return output;
         }
-
     }
 }

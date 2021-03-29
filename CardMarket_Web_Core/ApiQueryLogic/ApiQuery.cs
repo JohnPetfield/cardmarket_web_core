@@ -58,7 +58,7 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                 List<Product> products = iDao.GetAllProductsFromDB(inputObj.cardNamesList);
 
                 List<ProductObj> productObjs = MyListOps.ProductObjListFromUnsortedProductObj(products, inputObj.cardNamesList);
-
+                
                 ApiCall apiCall = new ApiCall();
                 articlesConsolidatedUsingMetaproductId = apiCall.Run(inputObj, iDao, productObjs);
                 

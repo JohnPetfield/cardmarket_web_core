@@ -54,12 +54,20 @@ namespace CardMarket_Web_Core.DbCode
             ///https://stackoverflow.com/questions/799446/creating-a-comma-separated-list-from-iliststring-or-ienumerablestring
 
             string cardNamesSqlSection = ListToStringForSQL(cardNamesList);
-
             string sqlStatement = "select * from Product where  (" + cardNamesSqlSection + " )";
+
+            Console.WriteLine(sqlStatement); 
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 SqlCommand command = new SqlCommand(sqlStatement, connection);
+
+                int i = 0;
+                foreach(string s in cardNamesList)
+                {
+                    i++;
+                    command.Parameters.AddWithValue("@name" + i.ToString(),"%" + s + "%");
+                }
 
                 connection.Open();
                 SqlDataReader reader = command.ExecuteReader();
@@ -75,6 +83,8 @@ namespace CardMarket_Web_Core.DbCode
                     };
 
                     retProducObj.Add(p);
+
+                    Console.WriteLine("DAOSQL: cardname: " + p.enName);
                 }
             }
             return retProducObj;

@@ -75,3 +75,7 @@ body {
 .right-margin {
     padding-right: 5px;
 }
+
+.form-control{
+    width:20em;
+}
