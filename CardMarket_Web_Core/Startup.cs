@@ -53,7 +53,7 @@ namespace CardMarket_Web_Core
                 /// 
 
                 endpoints.MapControllerRoute(name: "CardMarket",
-                pattern: "CardMarket/{action}",
+                pattern: "cardmarket/{action}",
                 defaults: new { controller = "CardMarket", action = "Index" });
 
                 endpoints.MapControllerRoute(

@@ -39,7 +39,12 @@ namespace CardMarket_Web_Core.Controllers
             return View();
         }
 
-        public IActionResult ApiQuery()
+        public string test()
+        {
+            return "test message";
+        }
+
+        public IActionResult findsellers()
         {
 
             Input input = new Input
@@ -47,7 +52,7 @@ namespace CardMarket_Web_Core.Controllers
                 cardNamesString = "Shadowborn Apostle"
             };
 
-            return View("ApiQuery", input);
+            return View("findsellers", input);
         }
 
         public ActionResult ViewOrders(Input input)
@@ -56,6 +61,7 @@ namespace CardMarket_Web_Core.Controllers
             {
                 input.PrepareInput();
 
+                
                 APIQuery query = new APIQuery(input);
 
                 ApiQueryModel apiQueryModel = new ApiQueryModel
@@ -63,7 +69,26 @@ namespace CardMarket_Web_Core.Controllers
                     orders = query.RunQuery(iDAO)
                 };
 
-                return View("ViewOrders", apiQueryModel);
+                /*
+                List<Article> a = new List<Article>() 
+                { 
+                    new Article{ enName = "Damnation", price = 1.1f, currencyCode = "GB"},
+                    new Article{ enName = "Kadena",    price = 2.2f, currencyCode = "GB"},
+                    new Article{ enName = "Volrath",   price = 3.3f, currencyCode = "GB"},
+                };
+                List<Order> o = new List<Order>
+                {
+                    new Order{user = "seller 1", totalCost = 111f,articles = a},
+                    new Order{user = "seller 2", totalCost = 222f,articles = a},
+                    new Order{user = "seller 3", totalCost = 333f,articles = a}
+                };
+                ApiQueryModel apiModelObj = new ApiQueryModel
+                {
+                    orders = o
+                };
+                */
+
+                return View("ViewOrders", apiQueryModel) ;
             }
             catch (AggregateException ae)
             {
@@ -71,13 +96,14 @@ namespace CardMarket_Web_Core.Controllers
 
                 foreach (var ex in ae.Flatten().InnerExceptions)
                 {
+
                     if (ex is WebException)
                     {
                         Console.WriteLine("caught webexception - cardmarket conroller");
                         Console.WriteLine(ex.Message);
                         Console.WriteLine("Exception Type: " + ex.GetType());
-                        ViewBag.ErrorTitle = "webexception";
-                        ViewBag.ErrorMessage = "CardMarket's website has timed out.";
+                        ViewBag.ErrorTitle = "CardMarket Error" + ex.GetType();
+                        ViewBag.ErrorMessage = "CardMarket's website has returned an error. " + ex.Message;
                         return View("Error");
                     }
                     
