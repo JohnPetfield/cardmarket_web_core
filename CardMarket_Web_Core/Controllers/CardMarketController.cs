@@ -36,13 +36,20 @@ namespace CardMarket_Web_Core.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            //return View();
+            Input input = new Input
+            {
+                cardNamesString = "Shadowborn Apostle"
+            };
+
+            return View("findsellers", input);
         }
 
         public string test()
         {
             return "test message";
         }
+        /*
 
         public IActionResult findsellers()
         {
@@ -53,7 +60,7 @@ namespace CardMarket_Web_Core.Controllers
             };
 
             return View("findsellers", input);
-        }
+        }*/
 
         public ActionResult ViewOrders(Input input)
         {

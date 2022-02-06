@@ -21,6 +21,9 @@ namespace CardMarket_Web_Core
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    
+                    /* removed and hopefully replaced by NGINX*/
+                    
                     webBuilder.UseUrls("http://*:5000");
                 });
     }
