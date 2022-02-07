@@ -90,14 +90,14 @@ namespace CardMarket_Web_Core
 
                 /// https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/routing?view=aspnetcore-5.0
                 /// 
-
+                /*
                 endpoints.MapControllerRoute(name: "CardMarket",
                 pattern: "findsellers",
                 defaults: new { controller = "CardMarket", action = "Index" });
-
+                */
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=CardMarket}/{action=Index}/{id?}");
             });
         }
     }
