@@ -21,10 +21,12 @@ namespace CardMarket_Web_Core
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    
-                    /* removed and hopefully replaced by NGINX*/
-                    
-                    webBuilder.UseUrls("http://*:5000");
+
+                    /// url(s) now input parameters in the service file
+                    ///etc/systemd/system/dotnet-cardmarket.service
+
+                    //webBuilder.UseUrls("http://*:5000", "https://*:5000");
+                    //webBuilder.UseUrls("http://*:5000");
                 });
     }
 }
