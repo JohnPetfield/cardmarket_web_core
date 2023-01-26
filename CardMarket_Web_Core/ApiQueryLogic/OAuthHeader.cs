@@ -18,19 +18,13 @@ namespace CardMarket_Web_Core.ApiQueryLogic
         public OAuthHeader(Dictionary<string, string> _tokens)
         {
             tokens = _tokens;
-
             appToken = tokens["appToken"];
             appSecret = tokens["appSecret"];
             accessToken = tokens["accessToken"];
             accessSecret = tokens["accessSecret"];
 
-            //Console.WriteLine("accessSecret: " + accessSecret);
-
             String nonce = Guid.NewGuid().ToString("n");
-            //String nonce = "53eb1f44909d6";
             String timestamp = (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds.ToString();
-            //String timestamp = "1407917892";
-            /// Initialize all class members
             this.headerParams = new Dictionary<String, String>();
             this.headerParams.Add("oauth_consumer_key", this.appToken);
             this.headerParams.Add("oauth_token", this.accessToken);
@@ -67,7 +61,6 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                 var key = parts[0];
                 var value = parts.Count() > 1 ? parts[1] : "";
 
-                //Console.WriteLine("key:- " + key + "value:- " + value);
                 this.headerParams.Add(key, value);
             }
 
@@ -93,18 +86,7 @@ namespace CardMarket_Web_Core.ApiQueryLogic
             /// Create the OAuth signature
             String signatureKey = Uri.EscapeDataString(this.appSecret) + "&" + Uri.EscapeDataString(this.accessSecret);
 
-            /*
-             * BEFORE
-             * 
-            HMAC hasher = HMACSHA1.Create();
-            hasher.Key = Encoding.UTF8.GetBytes(signatureKey);
-            Byte[] rawSignature = hasher.ComputeHash(Encoding.UTF8.GetBytes(baseString));
-            */
-
-            //HMAC hasher = HMACSHA1.Create();
-
             HMAC hasher = new HMACSHA1();
-
 
             hasher.Key = Encoding.UTF8.GetBytes(signatureKey);
             Byte[] rawSignature = hasher.ComputeHash(Encoding.UTF8.GetBytes(baseString));
@@ -121,8 +103,6 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                 headerParamStrings.Add(parameter.Key + "=\"" + parameter.Value + "\"");
             }
             String authHeader = "OAuth " + String.Join<String>(", ", headerParamStrings);
-
-            //Console.WriteLine("authHeader : " + authHeader);
 
             return authHeader;
         }

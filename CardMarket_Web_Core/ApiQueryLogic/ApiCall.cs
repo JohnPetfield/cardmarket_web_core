@@ -45,11 +45,7 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                 String url = "https://api.cardmarket.com/ws/v2.0/output.json/articles/" + p.idProduct
                     + "?idLanguage=1&isAltered=false&isFoil=false&isSigned=false"; //+ "?idLanguage=1";
 
-                Console.WriteLine("Article API call - started");
-
                 ArticleObj returnArticleObj = JsonConvert.DeserializeObject<ArticleObj>(myRequest.MakeRequest(url), JsonSerializerSettings);
-
-                Console.WriteLine("Article API call - completed");
 
                 if (returnArticleObj != null)
                 {
@@ -57,27 +53,15 @@ namespace CardMarket_Web_Core.ApiQueryLogic
 
                     foreach (Article a in returnArticleObj.article)
                     {
-                        // products should be stored in dictionary, then this could be just looked up whenever needed??
                         a.idMetaproduct = p.idMetaproduct;
                         a.enName = p.enName;
                         articleCount++;
-                    } // foreach Article
+                    }
 
                     cumulativeArticleList.AddRange(returnArticleObj.article);
-
-                } // article !=null
-                else
-                {
-                    Console.WriteLine("------");
-                    Console.WriteLine("returnArticleObj NULL --- enName: " + p.enName +
-                                    " idProduct: " + p.idProduct +
-                                    " idMetaproduct: " + p.idMetaproduct +
-                                    " expansionName: " + p.expansionName);
-                    Console.WriteLine("------");
                 }
                 #endregion
-            }); //Parallel.ForEach product
-
+            });
             return cumulativeArticleList;
         }
 
@@ -119,20 +103,15 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                         String url = "https://api.cardmarket.com/ws/v2.0/output.json/products/find?search="
                                    + cardName + "&exact=true&idGame=1&idLanguage=1";
 
-                        Console.WriteLine("Product Info for card: [[{0}]] not held on DB.", cardName);
-                        Console.WriteLine("Product API call - started");
                         productObj = JsonConvert.DeserializeObject<ProductObj>(myRequest.MakeRequest(url), JsonSerializerSettings);
-                        Console.WriteLine("Product API call - ended");
 
                         if (productObj != null &&
                             productObj.product.Count() > 0)
                         {
                             // save to DB
-                            //iDao.AddProduct(productObj);
                             productObjsToSaveToDb.Add(productObj);
                         }
                     }
-
                     #region productLoop
 
                     List<Article> cumulativeArticleList;
@@ -142,7 +121,6 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                     }
                     else
                     {
-                        Console.WriteLine("throw custom cardnotfound exception");
                         throw new CardNotFoundException("Card: [[" + cardName + "]] not found.");
                     }
                     #endregion

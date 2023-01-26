@@ -39,15 +39,6 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                 Console.WriteLine("Country Code:- " + inputObj.countryCode);
             }
 
-            ///    Each product returns articles from users, a product is a reprint so I'm going to 
-            ///    consolidate all the lists of Articles for each product into a single list of 
-            ///    Articles for all products available for a metaproductID
-
-            /// getData 
-            /// INPUTS   List<string>        inputObj.cardNamesList
-            /// OUTPUTS  List<List<Article>> articlesConsolidatedUsingMetaproductId
-
-
             List<List<Article>> articlesConsolidatedUsingMetaproductId = new List<List<Article>>();
 
             var exceptions = new ConcurrentQueue<Exception>();
@@ -68,11 +59,6 @@ namespace CardMarket_Web_Core.ApiQueryLogic
                     Console.WriteLine("about to save all productsDB");
                     iDao.SaveAllProductsDB(apiCall.productObjsToSaveToDb);
                 }
-                /// ApiCall to have a list of ProductObj,
-                /// when I'm currently calling idao.AddProduct, this should simple add the productObj
-                /// to the list, then here after apiCall.Run has finished we can get the list and pass it to the 
-                /// DAO to save all products in one go.
-
             }
             catch (Exception e)
             {
@@ -81,13 +67,6 @@ namespace CardMarket_Web_Core.ApiQueryLogic
 
             if (exceptions.Count > 0) throw new AggregateException(exceptions);
             #endregion
-
-            /// organiseData 
-            /// INPUTS : List<List<Article>> articlesConsolidatedUsingMetaproductId
-            /// OUTPUTS: List<Order>         potentialOrders
-
-            /// Organise data takes the data from API calls and does all the 
-            /// processing / grouping / filtering to create the orders and order them
 
             return MyListOps.OrganiseDataAfterApiCalls(articlesConsolidatedUsingMetaproductId,inputObj);
             #endregion

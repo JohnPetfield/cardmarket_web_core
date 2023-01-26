@@ -10,9 +10,6 @@ namespace CardMarket_Web_Core.ApiQueryLogic
     {
         public static List<List<Article>> OrderListOfLists(List<List<Article>> collection)
         {
-            //Console.WriteLine("===OrderList===");
-            //Console.WriteLine("collection.Count: " + collection.Count);
-
             List<List<Article>> returnCollection = new List<List<Article>>();
 
             foreach (List<Article> list in collection)
@@ -26,9 +23,6 @@ namespace CardMarket_Web_Core.ApiQueryLogic
 
                 returnCollection.Add(article);
             }
-
-            // Order the collection of lists
-            //  returnCollection.Sort((a, b) => a.Count - b.Count);
 
             return returnCollection;
         }
@@ -121,10 +115,7 @@ namespace CardMarket_Web_Core.ApiQueryLogic
             {
                 Console.WriteLine("No of results limited to: " + resultsLimit);
             }
-            Console.WriteLine("No. records returned: " + potentialOrders.Count());
-            Console.WriteLine("ApiQuery - completed");
             return potentialOrders;
-            //return new List<Order>();
         }
 
         public static List<ProductObj> ProductObjListFromUnsortedProductObj(List<Product> productList,

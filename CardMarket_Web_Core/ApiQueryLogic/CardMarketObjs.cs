@@ -34,18 +34,14 @@ namespace CardMarket_Web_Core.ApiQueryLogic
         public int idMetaproduct { get; set; }
         public string expansionName { get; set; }
 
-
         public int countReprints { get; set; }
 
         public string locName { get; set; }
-
         public List<Localization> localization { get; set; }
-
         public string website { get; set; }
         public string image { get; set; }
         public string gameName { get; set; }
         public string categoryName { get; set; }
-
         public int idGame { get; set; }
 
         /* some articles have a range as a number i.e. 
@@ -82,39 +78,6 @@ namespace CardMarket_Web_Core.ApiQueryLogic
         public List<Article> article;
     }
 
-    /*
-    public class Article
-    {
-        // metaproduct ID added by me not in 
-        // returned Article JSON data
-        public int idMetaproduct { get; set; }
-        public string enName { get; set; }
-        //
-        // 
-
-        public int idArticle { get; set; }
-        public int idProduct { get; set; }
-
-        public Language language { get; set; }
-
-        public string comments { get; set; }
-        public float price { get; set; }
-        public int idCurrency { get; set; }
-        public string currencyCode { get; set; }
-        public int count { get; set; }
-        public bool inShoppingCart { get; set; }
-
-        public Prices[] prices { get; set; }
-        public Seller seller { get; set; }
-
-        public string condition { get; set; }
-
-        public bool isFoil { get; set; }
-        public bool isSigned { get; set; }
-        public bool isPlayset { get; set; }
-        public bool isAltered { get; set; }
-    }
-    */
     public class Seller
     {
         public int idUser { get; set; }
@@ -123,10 +86,8 @@ namespace CardMarket_Web_Core.ApiQueryLogic
         public int reputation { get; set; }
         public int sellCount { get; set; }
         public bool onVacation { get; set; }
-
         public Name name { get; set; }
         public Address address { get; set; }
-
         public string phone { get; set; }
         public string email { get; set; }
         public string vat { get; set; }
@@ -138,7 +99,6 @@ namespace CardMarket_Web_Core.ApiQueryLogic
         public int soldItems { get; set; }
         public int avgShippingTime { get; set; }
         public int riskGroup { get; set; }
-        //public double lossPercentage { get; set; }
     }
 
     public class Name
@@ -164,20 +124,4 @@ namespace CardMarket_Web_Core.ApiQueryLogic
         public string languageName { get; set; }
     }
     #endregion
-    /*
-    #region Order
-    public class Order
-    {
-        public string user { get; set; }
-        public float totalCost { get; set; }
-
-        public List<Article> articles { get; set; }
-
-        public Order()
-        {
-            articles = new List<Article>();
-        }
-    }
-    #endregion
-    */
 }

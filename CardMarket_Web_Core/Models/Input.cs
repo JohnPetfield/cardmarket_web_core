@@ -9,11 +9,6 @@ namespace CardMarket_Web_Core.Models
 {
     public class Input
     {
-        //public List<string> listCardNames;
-
-        /* This is whats input in the form, which is then assigned
-         * to the variable cardNamesList*/
-
         [Required]
         [DisplayName("Card Names:")]
         public string cardNamesString { get; set; }

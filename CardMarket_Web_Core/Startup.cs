@@ -60,13 +60,7 @@ namespace CardMarket_Web_Core
             // in nginx config and here, it works, but not clear what's wrong with the 
             // first approach
 
-            //THIS WORKS
-            //app.UsePathBase("/cardmarket");
-
-            //THIS ALSO WORKS and is better than app.UsePathBase
             app.UsePathBase(Configuration.GetValue<string>("NGINX_location_subdirectory"));
-
-
 
             if (env.IsDevelopment())
             {
@@ -78,7 +72,6 @@ namespace CardMarket_Web_Core
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();

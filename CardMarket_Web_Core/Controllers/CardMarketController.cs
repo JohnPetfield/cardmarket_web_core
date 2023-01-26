@@ -36,7 +36,6 @@ namespace CardMarket_Web_Core.Controllers
 
         public IActionResult Index()
         {
-            //return View();
             Input input = new Input
             {
                 cardNamesString = "Shadowborn Apostle"
@@ -49,18 +48,6 @@ namespace CardMarket_Web_Core.Controllers
         {
             return "test message";
         }
-        /*
-
-        public IActionResult findsellers()
-        {
-
-            Input input = new Input
-            {
-                cardNamesString = "Shadowborn Apostle"
-            };
-
-            return View("findsellers", input);
-        }*/
 
         public ActionResult ViewOrders(Input input)
         {
@@ -68,7 +55,6 @@ namespace CardMarket_Web_Core.Controllers
             {
                 input.PrepareInput();
 
-                
                 APIQuery query = new APIQuery(input);
 
                 ApiQueryModel apiQueryModel = new ApiQueryModel
@@ -100,15 +86,11 @@ namespace CardMarket_Web_Core.Controllers
             catch (AggregateException ae)
             {
                 /// https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/how-to-handle-exceptions-in-parallel-loops
-
                 foreach (var ex in ae.Flatten().InnerExceptions)
                 {
 
                     if (ex is WebException)
                     {
-                        Console.WriteLine("caught webexception - cardmarket conroller");
-                        Console.WriteLine(ex.Message);
-                        Console.WriteLine("Exception Type: " + ex.GetType());
                         ViewBag.ErrorTitle = "CardMarket Error" + ex.GetType();
                         ViewBag.ErrorMessage = "CardMarket's website has returned an error. " + ex.Message;
                         return View("Error");
@@ -116,17 +98,12 @@ namespace CardMarket_Web_Core.Controllers
                     
                     else if (ex is CardNotFoundException)
                     {
-                        Console.WriteLine("caught CardNotFoundException - cardmarket conroller");
-                        Console.WriteLine(ex.Message);
-                        Console.WriteLine("Exception Type: " + ex.GetType());
                         ViewBag.ErrorTitle = "Card Name";
                         ViewBag.ErrorMessage = ex.Message;
                         return View("Error");
                     }
                     else
                     {
-                        Console.WriteLine("caught general exception - cardmarket conroller");
-                        Console.WriteLine("exception message " + ex.Message);
                         return View("Error");
                     }
                 }

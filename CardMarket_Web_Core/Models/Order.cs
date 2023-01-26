@@ -13,8 +13,6 @@ namespace CardMarket_Web_Core.Models
         [DisplayName("Seller:")]
         public string user { get; set; }
 
-        //[DataType(DataType.Currency) ]
-        //[DisplayFormat(DataFormatString = "{0:C}")]
         [DisplayFormat(DataFormatString = "{0:n2} €")]
         [DisplayName("Total Cost:")]
         public float totalCost { get; set; }
@@ -38,27 +36,20 @@ namespace CardMarket_Web_Core.Models
         // returned Article JSON data
         public int idMetaproduct { get; set; }
         public string enName { get; set; }
-        //
-        // 
-
         public int idArticle { get; set; }
         public int idProduct { get; set; }
 
         public string comments { get; set; }
 
-        //[DataType(DataType.Currency)]
         [DisplayFormat(DataFormatString = "{0:n2} €")]
         [DisplayName("Price:")]
         public float price { get; set; }
-
         public Seller seller { get; set; }
         public int idCurrency { get; set; }
         public string currencyCode { get; set; }
         public int count { get; set; }
         public bool inShoppingCart { get; set; }
-
         public string condition { get; set; }
-
         public bool isFoil { get; set; }
         public bool isSigned { get; set; }
         public bool isPlayset { get; set; }

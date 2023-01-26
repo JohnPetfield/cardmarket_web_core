@@ -9,7 +9,6 @@ namespace CardMarket_Web_Core.DbCode
     class DAOSQL :DAObase, IDAO
     {
         private string connectionString;
-        //MySqlConnection conn;
 
         public DAOSQL (string _s)
         {
@@ -89,6 +88,5 @@ namespace CardMarket_Web_Core.DbCode
             }
             return retProducObj;
         }
-
     }
 }
