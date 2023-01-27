@@ -1,69 +1,68 @@
 ﻿@model CardMarket_Web_Core.Models.ApiQueryModel
-
+<p class="alert-warning">@ViewBag.ErrorMessage</p>
 <div>
     <h4>Sellers Found</h4>
     <hr />
     <dl class="dl-horizontal">
     </dl>
 
-
     @if (Model.Empty)
     {
-        <h5>No Sellers found.</h5>
+    <h5>No Sellers found.</h5>
     }
     else
     {
         foreach (var item in Model.orders)
         {
-            <table>
-                <tr>
-                    <td>
-                        @Html.DisplayNameFor(model => item.user)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(model => item.user)
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        @Html.DisplayNameFor(model => item.totalCost)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(model => item.totalCost)
-                    </td>
-                </tr>
-                <tr>
-                    <td class="right-margin">
-                        @Html.DisplayNameFor(model => item.sellerLocation)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(model => item.sellerLocation)
-                    </td>
-                </tr>
+    <table>
+        <tr>
+            <td>
+                @Html.DisplayNameFor(model => item.user)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.user)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @Html.DisplayNameFor(model => item.totalCost)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.totalCost)
+            </td>
+        </tr>
+        <tr>
+            <td class="right-margin">
+                @Html.DisplayNameFor(model => item.sellerLocation)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.sellerLocation)
+            </td>
+        </tr>
 
-                <tr>
-                    <td style="vertical-align: top">
-                        @Html.DisplayNameFor(model => item.articles)
-                    </td>
-                    <td>
-                        <table>
-                            @foreach (var article in item.articles)
+        <tr>
+            <td style="vertical-align: top">
+                @Html.DisplayNameFor(model => item.articles)
+            </td>
+            <td>
+                <table>
+                    @foreach (var article in item.articles)
                             {
-                                <tr>
-                                    <td class="right-margin">
-                                        @Html.DisplayFor(model => article.enName)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(model => article.price)
-                                    </td>
-                                </tr>
+                    <tr>
+                        <td class="right-margin">
+                            @Html.DisplayFor(model => article.enName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(model => article.price)
+                        </td>
+                    </tr>
                             }
-                        </table>
-                    </td>
-                </tr>
-            </table>
+                </table>
+            </td>
+        </tr>
+    </table>
 
-            <hr />
+    <hr />
         }
     }
 

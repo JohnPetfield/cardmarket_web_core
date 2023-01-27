@@ -62,25 +62,6 @@ namespace CardMarket_Web_Core.Controllers
                     orders = query.RunQuery(iDAO)
                 };
 
-                /*
-                List<Article> a = new List<Article>() 
-                { 
-                    new Article{ enName = "Damnation", price = 1.1f, currencyCode = "GB"},
-                    new Article{ enName = "Kadena",    price = 2.2f, currencyCode = "GB"},
-                    new Article{ enName = "Volrath",   price = 3.3f, currencyCode = "GB"},
-                };
-                List<Order> o = new List<Order>
-                {
-                    new Order{user = "seller 1", totalCost = 111f,articles = a},
-                    new Order{user = "seller 2", totalCost = 222f,articles = a},
-                    new Order{user = "seller 3", totalCost = 333f,articles = a}
-                };
-                ApiQueryModel apiModelObj = new ApiQueryModel
-                {
-                    orders = o
-                };
-                */
-
                 return View("ViewOrders", apiQueryModel) ;
             }
             catch (AggregateException ae)
@@ -91,9 +72,30 @@ namespace CardMarket_Web_Core.Controllers
 
                     if (ex is WebException)
                     {
-                        ViewBag.ErrorTitle = "CardMarket Error" + ex.GetType();
-                        ViewBag.ErrorMessage = "CardMarket's website has returned an error. " + ex.Message;
-                        return View("Error");
+                        //ViewBag.ErrorTitle = "CardMarket Error" + ex.GetType();
+                        ViewBag.ErrorMessage = "CardMarket's API is not available, returning Dummy data for demonstrative purposes.";
+
+                        List<Article> a = new List<Article>()
+                        {
+                            new Article{ enName = "Damnation", price = 1.1f, currencyCode = "GB"},
+                            new Article{ enName = "Kadena",    price = 2.2f, currencyCode = "GB"},
+                            new Article{ enName = "Volrath",   price = 3.3f, currencyCode = "GB"},
+                        };
+                        List<Order> o = new List<Order>
+                        {
+                            new Order{user = "seller 1", totalCost = 111f,articles = a},
+                            new Order{user = "seller 2", totalCost = 222f,articles = a},
+                            new Order{user = "seller 3", totalCost = 333f,articles = a}
+                        };
+                        ApiQueryModel apiQueryModelDummy = new ApiQueryModel
+                        {
+                            orders = o
+                        };
+
+
+                        return View("ViewOrders", apiQueryModelDummy);
+
+                        //return View("Error");
                     }
                     
                     else if (ex is CardNotFoundException)
