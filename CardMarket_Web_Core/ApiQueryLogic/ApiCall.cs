@@ -79,60 +79,62 @@ namespace CardMarket_Web_Core.ApiQueryLogic
 
                 #region wantedCards
 
-                    // See if cardname is on DB
-                    ProductObj productObj = new ProductObj();
+                // See if cardname is on DB
+                ProductObj productObj = new ProductObj();
 
-                    if (productObjs != null)
+                if (productObjs != null)
+                {
+                    foreach (ProductObj po in productObjs)
                     {
-                        foreach (ProductObj po in productObjs)
+                        if (po != null &&
+                            !String.IsNullOrWhiteSpace(po.cardName) &&
+                            !String.IsNullOrEmpty(po.cardName) &&
+                            po.cardName.StartsWith(cardName))
                         {
-                            if (po != null &&
-                               !String.IsNullOrWhiteSpace(po.cardName) &&
-                               !String.IsNullOrEmpty(po.cardName) &&
-                                po.cardName.StartsWith(cardName))
-                            {
-                                productObj = po;
-                                Console.WriteLine("found [[" + cardName + "]] on DB.");
-                            }
+                            productObj = po;
+                            Console.WriteLine("found [[" + cardName + "]] on DB.");
                         }
                     }
+                }
 
-                    // Not found on DB, make API call to get product info
-                    if (productObj == null || productObj.cardName == null)
+                // Not found on DB, make API call to get product info
+                if (productObj == null || productObj.cardName == null)
+                {
+                    String url = "https://api.cardmarket.com/ws/v2.0/output.json/products/find?search="
+                                + cardName + "&exact=true&idGame=1&idLanguage=1";
+
+                    productObj = JsonConvert.DeserializeObject<ProductObj>(myRequest.MakeRequest(url), JsonSerializerSettings);
+
+                    if (productObj != null &&
+                        productObj.product.Count() > 0)
                     {
-                        String url = "https://api.cardmarket.com/ws/v2.0/output.json/products/find?search="
-                                   + cardName + "&exact=true&idGame=1&idLanguage=1";
-
-                        productObj = JsonConvert.DeserializeObject<ProductObj>(myRequest.MakeRequest(url), JsonSerializerSettings);
-
-                        if (productObj != null &&
-                            productObj.product.Count() > 0)
-                        {
-                            // save to DB
-                            productObjsToSaveToDb.Add(productObj);
-                        }
+                        // save to DB
+                        productObjsToSaveToDb.Add(productObj);
                     }
-                    #region productLoop
+                }
+                #region productLoop
 
-                    List<Article> cumulativeArticleList;
-                    if (productObj != null && productObj.cardName != "")
-                    {
-                        cumulativeArticleList = this.GetArticleFromProductForEach(productObj);
-                    }
-                    else
-                    {
-                        throw new CardNotFoundException("Card: [[" + cardName + "]] not found.");
-                    }
-                    #endregion
+                List<Article> cumulativeArticleList;
+                if (productObj != null && productObj.cardName != "")
+                {
+                    cumulativeArticleList = this.GetArticleFromProductForEach(productObj);
+                }
+                else
+                {
+                    throw new CardNotFoundException("Card: [[" + cardName + "]] not found.");
+                }
+                #endregion
 
-                    // Sort each list of Articles in username order
-                    cumulativeArticleList.Sort((x, y) => x.seller.username.CompareTo(y.seller.username));
+                // Sort each list of Articles in username order
+                cumulativeArticleList.Sort((x, y) => x.seller.username.CompareTo(y.seller.username));
 
-                    articlesConsolidatedUsingMetaproductId.Add(cumulativeArticleList);
-                    #endregion
+                articlesConsolidatedUsingMetaproductId.Add(cumulativeArticleList);
+                #endregion
             });  // Parallel.ForEach cardName
 
             return articlesConsolidatedUsingMetaproductId;
         }
     }
 }
+
+
